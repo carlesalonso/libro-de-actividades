@@ -5,30 +5,13 @@ Documentos relacionados
 
 # Configurar MV GNU/Linux Debian
 
-`Revisado para Debian 8`
+# Configurar Nombre EQUIPO, DOMINIO y USUARIO
 
-> * Donde aparezca AA debemos poner el código asignado al aula:
->     * 18 para el aula108
->     * 19 para el aual109
-> * Donde aparezca XX debemos poner el código asignado al alumno.
-
-* IP: `172.AA.XX.41` (Donde XX corresponde al nº de cada puesto).
-    * Si tenemos varias máquinas usaremos las IP 172.AA.XX.42, 172.AA.XX.43, etc.
-    * Máscara de red: `255.255.0.0`
-    * Gateway: `172.AA.0.1`
-    * Servidor DNS: `8.8.4.4`
-* Nombre de equipo: `primer-apellido-del-alumnoXXd`.
-    * Por ejemplo vargasXXd
-    * Si tenemos varias máquinas las llamaremos vargasXXd, vargasXXe, vargasXXf, etc.
-* Nombre de dominio: `curso1516` (Modificar los números al curso actual).
-
-* Tarjeta de red VBox en `modo puente`.
-* Configurar [acceso remoto](../acceso-remoto/debian.md).
-* Configurar [firewall](../firewall.md).
-
-* Usuarios:
-    * Un usuario identificado con `nombre-del-alumno`.
-    * Poner al usuario `root` el DNI del alumno con la letra en minúscula.
+* Nombre de equipo: `primer-apellido-del-alumnoXXd1`.
+    * Por ejemplo vargasXXd1
+    * Si tenemos varias máquinas las llamaremos vargasXXd1, vargasXXd2, vargasXXd2, etc.
+* Nombre de dominio: `curso1819` (Modificar los números al curso actual).
+* Un usuario identificado con `nombre-del-alumno`.
 
 > **ATENCIÓN**
 >
@@ -36,77 +19,109 @@ Documentos relacionados
 Sin usar caracteres especiales como ñ, tildes, espacios, etc.
 > * Fichero `/etc/hostname`
 >     * Ponemos el `nombre-maquina.nombre-dominio`
->     * Por ejemplo: `vargasXXd.curso1617`
+>     * Por ejemplo: `vargasXXd1.curso1617`
 > * Fichero `/etc/hosts`.
 >     * Asegurarse de que hay una línea con `ip nombre-de-host`
->     * Por ejemplo: `127.0.0.2   vargasXXd.curso1617   vargasXXd`
+>     * Por ejemplo: `127.0.0.2   vargasXXd1.curso1617   vargasXXd1`
 
-## Comprobaciones finales
-
-Capturar imágen de la configuración del equipo:
+*Comprobar nombre de equipo y usuario:*
 ```
-date
-uname -a
-hostname -f           #Muestra nombre-maquina.nombre-dominio
-hostname -a           #Muestra nombre-maquina
-hostname -d           #Muestra nombre-dominio
+   date
+   uname -a
+   hostname -f           # Muestra nombre-máquina.nombre-dominio
+   hostname -a           # Muestra nombre-máquina
+   hostname -d           # Muestra nombre-dominio
 
-tail -n 5 /etc/passwd #Comprobar que existe el usuario
-id nombre-de-usuario  #Comprobar que existe el usuario
-ip a
-route -n
-ping 8.8.4.4
-host www.iespuertodelacruz.es
-blkid
+   tail -n 5 /etc/passwd # Comprobar que existe el usuario
+   id nombre-de-usuario  # Comprobar que existe el usuario
 ```
 
-## Entorno gráfico
+---
 
-En Debian/Ubuntu, para configurar la red mediante entorno gráfico podemos usar
-NetworkManager.
+# Configuración de red
 
-## Ficheros de configuración de red
+> * Donde aparezca AA debemos poner el código asignado al aula:
+>     * 18 para el aula108
+>     * 19 para el aula109
+> * Donde aparezca XX debemos poner el código asignado al alumno.
+
+* Tarjeta de red VBox en `modo puente`.
+* IP: `172.AA.XX.41` (Donde XX corresponde al nº de cada puesto).
+    * Si tenemos varias máquinas usaremos las IP 172.AA.XX.42, 172.AA.XX.43, etc.
+    * Máscara de red: `255.255.0.0`
+    * Gateway: `172.AA.0.1`
+    * Servidor DNS: `8.8.4.4`
+
+---
+
+# Proceso para configurar la red.
+
+Podemos configurar la red por entorno gráfico usando la aplicación NetworkManager.
+Por comandos debemos modificar el contenido de los ficheros de configuración de red.
 
 > Enlace de interés:
 >
 > * [Configurar tarjeta de red con IP estática en Debian sin interfaz gráfica](http://www.driverlandia.com/configurar-tarjeta-de-red-con-ip-estatica-en-debian-sin-interfaz-grafica/)
 
-* En máquinas Debian/Ubuntu podemos cambiar la configuración de red,
-modificando el fichero `/etc/network/interfaces`.
-* Para averiguar los nombres de nuestras interfaces usamos `ip a` o `ifconfig`.
+* Primero debemos averiguar el nombre de nuestra interfaces.
+    * Usaremos `ip a` o `ifconfig`.
+* Para cambiar la configuración de red,modificar el fichero `/etc/network/interfaces`.
 * Veamos un ejemplo, donde se configura el interfaz eth0 estático y el eth1 dinámico:
 
 ```
+# Ejemplo configuración interfaz loopback
 auto lo
 iface lo inet loopback
 
-auto eth0
-iface eth0 inet static
-  address 172.19.42.41
+# Ejemplo configuración interfaz enp0s3 en modo estático
+auto enp0s3
+iface enp0s3 inet static
+  address 172.AA.XX.41
   netmask 255.255.0.0
-  gateway 172.19.0.1
-  dns-nameservers 8.8.4.4
-  dns-search vargas42d.curso1617 vargas42d
-  dns-domain vargas42d.curso1617
+  gateway 172.AA.0.1
+  dns-nameserver 8.8.4.4
 
+# Ejemplo configuración interfaz ethq en modo dinámico
 auto eth1
 iface eth1 inet dhcp
 ```
-* Para que se tengan en cuenta los cambios podemos:
+
+> NOTA: Si NO tenemos instalado el paquete `resolvconf`, para configurar la resolución de nombres
+(Servidor DNS) debemos modificar el fichero `/etc/resolv.conf` y añadir `nameserver 8.8.4.4`.
+
+* Para que se apliquen los cambios hacemos lo siguiente:
+   * Reiniciar el equipo o
+   * `systemctl restart networking` o
    * `service networking restart` o
-   * Reiniciar el equipo.
 
-## Ficheros de configuración de DNS
+---
 
-Para poner la información de DNS en un SO Debian, hay que abrir el fichero `/etc/resolv.conf` y escriblir lo siguiente:
-
+*Comprobar la red:*
 ```
-search <domain-name>
-domain <domain-name>
-nameserver 127.0.0.1
-nameserver 172.16.1.1
+   ip a                  # Muestra configuración de red
+   ip route              # Muestra la tabla de enrutamiento. Antes se usaba "route -n"
+   ping 8.8.4.4          # Comprueba la conexión con una máquina de Internet
+   host www.nba.com      # Comprueba que funciona bien el DNS
+   blkid
 ```
+
+---
+
+# ANEXO
+
+## resolvconf
 
 Si tuviéramos problemas con resolvconf podemos reconfigurarlo con:
 * `sudo rm /etc/resolv.conf`
 * `sudo dpkg-reconfigure resolvconf`
+
+## Configurar temporalmente la red mediante comandos
+
+También podemos usar comandos del sistema para definir una configuración de red temporal. No es fija porque al reiniciar el equipo no se mantiene.
+
+* `ifconfig eth0 172.AA.XX.0 netmask 255.255.0.0`, para configurar la IP y la máscara de red.
+* `route add default gw 172.AA.0.1`, para configurar la puerta de enlace.
+* `echo nameserver 8.8.4.4 >> /etc/resolv.conf`, para configurar la IP del servidor DNS.
+
+## Netplan vs /etc/network/interfaces
+https://netplan.io/examples

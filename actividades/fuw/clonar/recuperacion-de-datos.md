@@ -3,7 +3,7 @@
 
 * En esta actividad vamos a practicar el borrado de ficheros y su recuperación.
 * Realizaremos la práctica de forma individual.
-* Vamos a usar una MV OpenSUSE según [configuración](../../global/configuracion/opensuse.md).
+* Vamos a usar una MV OpenSUSE con esta [configuración](../../global/configuracion/opensuse.md).
 
 ---
 
@@ -20,17 +20,19 @@ todos los pendrives y discos duros externos, pero entonces el tamaño del disco 
 
 * Creamos el directorio `disco_roto` dentro de `/mnt`.
 
-Montamos la partición del disco "roto"(`/dev/sdb1`) en la ruta `/mnt/disco_roto`.
-* `id`, consultar uid del usuario actual (UID).
-* `mount /dev/sdb1 /mnt/disco_roto -o defaults,uid=UID`, monta la partición en la ruta espacificada, y estableciendo los permisos para el usuario UID.   
-* Feedback de comprobación: `df -hT`, `mount | grep disco_roto`.
+Vamos a montar la partición del disco "roto"(`/dev/sdb1`) en la ruta `/mnt/disco_roto`.
+* `id nombre-del-alumno`, consultar UID de nuestro usuario. Lo más probable es que sea 1000.
+* `mount /dev/sdb1 /mnt/disco_roto -o defaults,uid=UIDNUMBER`, monta la partición en la ruta espacificada, estableciendo los permisos adecuado para el usuario UID.   
+* Comprobación:
+    * `df -hT`
+    * `mount | grep disco_roto`
 
 > Un sistema de ficheros FAT32 no es capaz de guardar información de usuarios ni los permisos
 de los ficheros/carpetas.
 
 * Copiaremos/descargaremos en dicha partición (sdb1) 3 ficheros:
-    * `FILE1`: Un fichero de texto
-    * `FILE2`: Una imagen/foto
+    * `FILE1`: Un fichero PDF.
+    * `FILE2`: Una imagen/foto.
     * `FILE3`: Una canción y/o vídeo.
     * Feedback de comprobación `ls /mnt/disco_roto`.
 * A continuación borraremos FILE1, FILE2 y FILE3, usando los comandos habituales de borrado.
@@ -41,7 +43,7 @@ Feedback de comprobación `ls /mnt/disco_roto`.
 > * Para realizar un borrado seguro de archivos usaríamos otras herramientas.
 
 * Desmontamos el disco "roto".
-    * Feedback de comprobación: `df -hT`, `mount |grep roto`.
+    * Feedback de comprobación: (a)`df -hT`, (b) `mount |grep roto`.
     * Si no podemos desmontar el disco, probablemente es que lo estamos usando.
     Con el comando `lsof |grep disco_roto`, podemos visualizar qué o quién está
     usando el disco.
@@ -60,9 +62,9 @@ para evitar que los procesos de recuperación afecten a la integridad del disco
 
 * Creamos un tercer disco de igual tamaño que el disco "roto". A este disco lo
 llamaremos `alfa` en VirtualBox.
-* Iniciamos la MV. Deben estar los 3 discos. Feeback de comprobación: `fdisk -l`
-* Los discos "roto" y "alfa" no deben estar montados. Feedback de comprobación: `df -hT`, `mount`
-* `fdisk -l`,vemos que el disco B tiene una partición y el disco C no.
+* Iniciamos la MV. Deben estar los 3 discos. Feeback de comprobación: `fdisk -l`.
+Además vemos que el disco B tiene una partición y el disco C no.
+* Los discos "roto" y "alfa" no deben estar montados. Comprobamos con `df -hT` y `mount`.
 
 Ahora vamos a clonar el disco "roto" en el "alfa". Ya hemos usado alguna herramienta
 de clonación (Clonezilla) pero en este caso vamos a usar el comando `dd`.
@@ -71,11 +73,14 @@ Si no clonamos los sectores "vacíos" (supuestamente vaciós) no se incluirían
 los ficheros eliminados.
 
 * Usar el comando `dd` para clonar el disco `roto` en el disco `alfa`.
-Ejemplo: `dd if=/dev/DISCO-ORIGEN of=/dev/DISCO-DESTINO`.
-Feedback de comprobación: `diff /dev/sdb1 /dev/sdc1`.
+Ejemplo: `dd if=/dev/sdb of=/dev/sdc`.
+* `diff /dev/sdb /dev/sdc` comando para comprobar que ambos discos son idénticos.
+* `diff /dev/sdb1 /dev/sdc1` comando para comprobar que ambas particiones son idénticas.
+    * Si todo va bien no muestra ningún mensaje.
+    * Si va mal nos dice que son diferentes.
 * `fdisk -l`,vemos que el disco C ahora si tiene una partición y el mismo formato que el B.
 
-Todas las pruebas las haremos en el disco `alfa` a partir de ahora.
+A partir de ahora, todas las pruebas las haremos en el disco `alfa`.
 
 > En una situación de trabajo real, quitaríamos el disco "roto" de la máquina y
 lo guardaríamos en sitio seguro. No es necesario hacerlo en la práctica.
@@ -116,7 +121,7 @@ Instalar el programa en nuestro sistema.
 Vamos a iniciar el proceso de recuperación sobre la partición del disco `alfa`.
 * Hay que demontar el disco `alfa`.
 * Abrimos una consola como root.
-* Ejecutamos `qphotorec`. De esta forma iniciamos el entorno gráfico de Photorec
+* Ejecutamos `qphotorec`. De esta forma iniciamos el entorno gráfico de Photorec.
 
 Ejemplo de uso de qphotorec:
 
@@ -126,10 +131,14 @@ Ejemplo de uso de qphotorec:
 
 > La carpeta con los archivos recuperados NO deben estar en el disco `alfa` ni en el disco `roto`.
 
-## 4.4 Recuperar ficheros de texto
+---
 
-Supongamos que no hemos podido recuperar el fichero de texto con las herramientas anteriores, entonces vamos a probar de otra forma.
+# 5. Recuperar ficheros de texto plano
 
+Supongamos que no hemos podido recuperar el fichero de texto con las herramientas anteriores,
+entonces vamos a probar de otra forma.
+
+* Montamos la partición del disco alfa (sdc).
 * Creamos un archivo `/mnt/disco_alfa/secreto.txt` con el siguiente contenido:
 
 ```
@@ -151,7 +160,7 @@ Estos son las claves de acceso de las naves imperiales.
 
 ---
 
-# 5. Borrado seguro
+# 6. Borrado seguro
 
 Hemos visto que aunque borremos un archivo todavía existen formas de recuperar dichos datos.
 Ahora vamos a ver cómo realizar un borrado seguro.
@@ -166,16 +175,16 @@ de por qué pasa esto la tenemos en el siguiente
 > Ante la duda, y para segurarse, muchas empresas recurren a la destrucción física de los disco.
 >
 
-## 5.1 Herramientas de borrado seguro
+## 6.1 Herramientas de borrado seguro
 
-Enlaces de SHRED:
-* [Cómo hacer borrado seguro con shred](http://www.welivesecurity.com/la-es/2014/11/24/como-hacer-borrado-seguro-shred-linux/).
-* [Borrado seguro de archivos con Shred](http://www.linuxtotal.com.mx/index.php?cont=info_seyre_008)
+> Información sobre la herramienta SHRED:
+> * [Cómo hacer borrado seguro con shred](http://www.welivesecurity.com/la-es/2014/11/24/como-hacer-borrado-seguro-shred-linux/).
+> * [Borrado seguro de archivos con Shred](http://www.linuxtotal.com.mx/index.php?cont=info_seyre_008)
+>
+> Información sobre `dd`:
+> * `dd if=/dev/zero of=FILE2`: Llena el contenido del fichero FILE2 con ceros.
 
-Ejemplo con `dd`:
-* `dd if=/dev/zero of=FILE2`: Llena el contenido del fichero FILE2 con ceros.
-
-## 5.2 Proceso de borrado seguro
+## 6.2 Proceso de borrado seguro
 
 * Creamos un disco nuevo VirtualBox de 10MB. A este disco lo llamaremos "limpio".
 * Iniciamos la MV.
@@ -183,8 +192,8 @@ Ejemplo con `dd`:
 * Montamos el disco `limpio` en la ruta `/mnt/disco_limpio`.
 Feedback de comprobación: `df -hT`, `mount | grep disco`
 * Volvemos a crear/descargar 3 archivos para eliminar en el disco `limpio`.
-    * `FILE1`: Un fichero de texto (txt)
-    * `FILE2`: Una imagen/foto (png)
+    * `FILE1`: Un fichero PDF.
+    * `FILE2`: Una imagen/foto (png).
     * `FILE3`: Una canción y/o vídeo.
     * Feedback de comprobación: `ls /mnt/disco_limpio`.
 * A continuación
@@ -197,19 +206,17 @@ Feedback de comprobación: `df -hT`, `mount | grep disco`
 
 ---
 
-# 6. Recuperar esquema de particionado
+# 7. Recuperar esquema de particionado
 
-OJO: Esta parte sólo funciona con particiones MBR. Estoy buscando la información
-para particiones GPT.
+OJO: Para esta parte vamos a usar discos con particiones MBR.
 
 Vamos a intentar recuperar un esquema de particionado dañado.
 
 * `fdisk -l |grep sdc`, comprobamos que se detecta la partición.
-* `dd if=/dev/zero of=/dev/sdc bs=512 count=1`, escribimos valores aleatorios
-en el sector 0 del disco sdc. Destruyendo el esquema de particiones del disco.
+* `dd if=/dev/zero of=/dev/sdc bs=512 count=1`, escribimos ceros en el sector 0 del disco sdc. Destruyendo el esquema de particiones de dicho disco.
 * `fdisk -l |grep sdc`, comprobamos que ha desaparecido la partición.
 * Ahora no se puede acceder a la partición sdc1.
-* Usar TestDisk para recuperar el esquema de particionado.
+* Usar `TestDisk` para recuperar el esquema de particionado.
 * Ahora se debería poder acceder a la partición sdc1.
 
 ---
@@ -242,42 +249,3 @@ Vamos a crear fichero como soporte de datos:
 
 * Vamos a crear un sistema de ficheros tipo ext2 dentro del fichero file-soporte.
     * Comando: "mkfs.ext2 /mnt/file-soporte".
-
-## A4. Escribir en el soporte
-
-Acceder al sistema de ficheros
-
-> NOTA: Para poder acceder al sistema de ficheros recién creado debemos montarlo en un directorio.
-* Crear el directorio "/mnt/dir-montaje".
-* Montamos el dispositivo soporte.
-* Comprobar que el sistema ficheros está montado. Comando: "df -hT".
-
-## A5. Escribir en el sistema de ficheros
-
-* Crear el fichero /mnt/dir-montaje/docs/README.
-* Escribir dentro algunas frases en inglés.
-* Crear el fichero /mnt/dir-montaje/docs/LEEME
-* Escribir dentro nuestro nombre.
-* Desmontar el sistema de ficheros. Comando: "umount /mnt/dir-montaje".
-* Comando: "vdir /mnt/dir-montaje". La información no se ha perdido. Sólo que el sistema de ficheros no está montado.
-* Montar sistema de ficheros y probar "vdir /mnt/dir-montaje".
-
-##A6. Eliminar un fichero
-
-* Borrar el fichero /mnt/dir-montaje/README
-* Comando: "vdir /mnt/dir-montaje". El fichero ya no existe.
-* Desmontar el sistema de ficheros.
-
-##A7. Recuperar el archivo eliminado
-Clonamos el disquete
-
-* Por seguridad, vamos a clonar el dispositivo.
-    * dd if=/mnt/fd0 of=/mnt/soporte-clonado.alfa
-    * dd if=/mnt/fd0 of=/mnt/soporte-clonado.beta
-
-Clonamos el fichero soporte
-
-* Si hacemos "cat /mnt/file-soporte". Veremos en pantalla el contenido (en crudo) del sistema de ficheros. Vemos que el contenido del fichero eliminado se muestra por pantalla. Por lo tanto ¡no ha sido eliminado completamente del sistema de almacenamiento!
-* Por seguridad, vamos a clonar el fichero soporte.
-    * dd if=/mnt/file-soporte of=/mnt/soporte-clonado.alfa
-    * dd if=/mnt/file-soporte of=/mnt/soporte-clonado.beta

@@ -4,7 +4,8 @@
 
 En este taller vamos a practicar diversas formas de ocultar nuestros datos.
 
-* Trabajaremos en parejas. Los llamaremos alumno1 y alumno2.
+* Nos podemos ayudar en parejas. Los llamaremos alumno1 y alumno2.
+* Cada alumno entregará un informe propio.
 * Entregaremos un informe con capturas de pantalla.
 
 ---
@@ -17,42 +18,47 @@ En este taller vamos a practicar diversas formas de ocultar nuestros datos.
 
 Hacemos lo siguiente:
 * Asegurarnos de tener instalado GPG (`zypper info gpg2`).
-* Crear un fichero de texto `/home/nombre-alumno/mensaje-secreto1.txt`.
+* Trabajaremos con nuestro usuario habitual. No usar root.
+* Crear un fichero de texto `/home/nombre-alumno/mensaje1-alumnoXX.txt`.
+    * Escribir dentro el nombre del alumno, la fecha de hoy y un título de una película.
 * Hacer una encriptación simétrica con GPG.
-    * `gpg -c mensaje-secreto1.txt`
+    * `gpg -c mensaje1-alumnoXX.txt`
 * Enviar fichero encriptado al compañero (alumno2) para que lo desencripte.
-    * `gpg -d mensaje-secreto1.txt.gpg`
+    * `gpg -d mensaje1-alumnoXX.txt.gpg`
 
 ## 1.2 Encriptado asimétrico
 
+Alumno1:
 * Alumno1 genera un par de claves pública/privada.
-    * `gpg --gen-key`
-    * Comprobamos `gpg -k`
-    * `tree .gnupg`
-
-> Comprobaremos que se crea un directorio oculto, dentro del home de nuestro usuario con el nombre `.gnugp`. Ahí es donde se guarda la información
-de claves de GPG para nuestro usuario.
-
+    * `gpg --gen-key`, genera un par de claves pública/privada.
+    * Consultar las claves públicas con alguno de los siguientes comandos 
+    `gpg --list-public-keys`, `gpg --list-keys` o `gpg -k`. La línea `pub 2048R/IDNUMBER`,
+    muestra la información con el identificador de la clave pública.
+    * `tree .gnupg`, Comprobaremos que se crea un directorio oculto, dentro del home de nuestro usuario con el nombre `.gnugp`. Ahí es donde se guarda la información de claves de GPG para nuestro usuario.
 * Alumno1 exporta la clave pública para pasarla al compañero.
-    * `gpg --output nombre-alumno1.pub.gpg --export PUBLIC_KEY_IDNUMBER`
-* Alumno2 crea un fichero de texto `/home/nombre-alumno/mensaje-secreto2.txt`.
+    * `gpg --output alumnoXX.pub.gpg --export PUBLIC_KEY_IDNUMBER`
+    * El valor PUBLIC_KEY_IDNUMBER lo obtenemos al consultar la salida del comando anterior (gpg -k).
+
+Alumno2:
+* Alumno2 crea un fichero de texto `/home/nombre-alumno/mensaje2-alumnoXX.txt`.
+    * Escribir dentro el nombre del alumno, la fecha de hoy y una frase/mensaje.
 * Alumno2 importa la clave pública del compañero (alumno1).
-    * `gpg --import nombre-alumno1.pub.gpg`
+    * `gpg --import alumnoXX.pub.gpg`
 * Alumno2 hace una encriptación asimétrica con GPG con la clave pública recibida.
-    * `gpg -k`, para ver las claves que tenemos.
-    * `gpg --encrypt --recipient PUBLIC_KEY_IDNUMBER mensaje-secreto2.txt`
+    * `gpg --list-public-keys`, para ver las claves públicas que tenemos.
+    * `gpg --encrypt --recipient PUBLIC_KEY_IDNUMBER mensaje2-alumnoXX.txt`
 * Alumno2 envía el fichero a alumno1 para que lo desencripte.
-* Alumno1 desencripta el fichero `gpg -d mensaje-secreto2.txt.gpg`.
+
+Alumno1:
+* Alumno1 desencripta el fichero `gpg -d mensaje2-alumnoXX.txt.gpg`.
 
 > Se entiende que podemos desencriptar el fichero porque ha sido encriptado
 con nuestra clave pública por parte del compañero que nos envía el archivo.
-eliminar una clave pública (de tu anillo de claves públicas):
 >
 > Otros comandos de interés:
 >
-> * `gpg --gen-key`, Crear una clave.
-> * `gpg --export -a “Nombre de Usuario"`, muestra la clave pública para el ‘Nombre de Usuario’ en la línea de comandos.
-> * `gpg --export-secret-key -a "Nombre de Usuario" > private.key`, Esto creará un archivo llamado private.key con la representación ascii de la clave privada para ‘Nombre de Usuario’.
+> * `gpg --export -a “Nombre de Usuario"`, muestra la clave pública para el "Nombre de Usuario" en la línea de comandos.
+> * `gpg --export-secret-key -a "Nombre de Usuario" > private.key`, Esto creará un archivo llamado private.key con la representación ASCII de la clave privada para "Nombre de Usuario".
 > * `gpg --import public.key`, Importar una clave pública.
 > * `gpg --allow-secret-key-import --import private.key`, Importar una clave privada.
 > * `gpg --delete-key "Nombre de Usuario"`, Esto elimina la clave pública de tu anillo de claves.
@@ -66,18 +72,19 @@ eliminar una clave pública (de tu anillo de claves públicas):
 > * [Información sobre firma GPG](https://www.genbetadev.com/seguridad-informatica/que-son-y-para-que-sirven-los-hash-funciones-de-resumen-y-firmas-digitales)
 
 Hacer lo siguiente:
-* Crear documento `firma.txt`, pondremos dentro un texto cualquiera.
+* Crear documento `firma-alumnoXX.txt`.
+    * Escribir dentro el nombre del alumno, la fecha de hoy y un grupo de música.
 * Vamos a firmar digitalmente el documento en modo ASCII.
-    * `gpg --clearsign firma.txt`
-* Consultar el fichero que se ha generado con la firma `firmar.txt.asc`
+    * `gpg --clearsign firma-alumnoXX.txt`
+* Consultar el fichero que se ha generado con la firma `firma-alumnoXX.txt.asc`
 * Comprobar que la firma es correcta.
-    * `gpg --verify firma.txt.asc`
-* Modificar el documento `firma.txt.asc`.
+    * `gpg --verify firma-alumnoXX.txt.asc`
+* Modificar el documento `firma-alumnoXX.txt.asc`.
 * Comprobar que ahora el fichero tiene la firma incorrecta.
 
 ---
 
-# 3. Estenografía
+# 3. Esteganografía
 
 > Enlaces de interés:
 >
@@ -85,16 +92,18 @@ Hacer lo siguiente:
 > * [Windows](http://www.taringa.net/posts/linux/19356036/Esconder-archivos-en-imagenes-Esteganografia.html)
 > * [Programa específico `steghide`](http://www.reydes.com/d/?q=Ocultar_un_Archivo_de_Texto_dentro_de_un_Archivo_JPG_utilizando_Steghide)
 > * [steghide](http://www.linuxadictos.com/steghide-esteganografia-para-ocultar-texto-en-imagenes.html)
-* [Esconder ficheros dentro de imágenes en Linux](www.ostechnix.com/hide-files-inside-images-linux/).
+> * [Esconder ficheros dentro de imágenes en Linux](http://www.ostechnix.com/hide-files-inside-images-linux/).
 
 Hacemos lo siguiente:
 * Consultar enlace sobre estenografía de "Andar por casa (zip y cat)".
-* Crear un fichero de texto con un mensaje oculto (`mensaje-oculto.txt`).
+* Crear un fichero de texto con un mensaje oculto (`secreto-alumnoXX.txt`).
+    * Escribir dentro el nombre del alumno, la fecha de hoy y un refrán o frase famosa.
 * Crear un fichero zip con el mensaje oculto.
-* Descargar una `imagen1.png` que nos guste.
-* Incrustar el fichero zip dentro de la `imagen1.png`, obteniendo un fichero `imagen2.png`.
-* Pasar el fichero `imagen2.png` al compañero.
-* El compañero debe aplicar el proceso necesario para extraer el mensaje oculto dentro de la `imagen2.png`.
+* Descargar una `imagen1-alumnoXX.png` que nos guste.
+* Incrustar el fichero zip dentro de la `imagen1-alumnoXX.png`, obteniendo un fichero `imagen2-alumnoXX.png`.
+* Pasar el fichero `imagen2-alumnoXX.png` al compañero.
+* Verificar el formato de las imágenes, bien usando el comando `file` o capturando vista de la misma.
+* El compañero debe aplicar el proceso necesario para extraer el mensaje oculto dentro de la `imagen2-alumnoXX.png`.
 
 ---
 
@@ -113,7 +122,8 @@ Estos ficheros contenedores se pueden crear usando la ventana de particionamient
 
 ## 4.2 proceso
 
-* Con el usuario nombre-alumno, crear el directorio `/home/nombre-alumno/contenedorXX.d`. Lo usaremos para montar el contenedor más adelante.
+* Por seguridad, vamos a hacer una instantánea de la MV antes de empezar con este apartado.
+* Con el usuario nombre-alumno, crear el directorio `/home/nombre-alumno/directorioXX.d`. Lo usaremos para montar el contenedor más adelante.
 * Ir a `Yast -> Particionador`.
 * Elegir `Crypt Files › Add Crypt File`.
 
@@ -125,7 +135,8 @@ Estos ficheros contenedores se pueden crear usando la ventana de particionamient
     * Tamaño 50 MB.
 * Activar el check box para crear el fichero.
 * Especificar el tipo de sistema de fichero.
-* Especificar el punto de montaje y asegurarse de que el dispositivo encriptado está marcado.
+* Especificar el punto de montaje (directorio creado anteriormente) 
+* Asegurarse de que el dispositivo encriptado está marcado.
 
 ![](./images/crypt-contenedor02.png)
 
@@ -139,14 +150,15 @@ Estos ficheros contenedores se pueden crear usando la ventana de particionamient
 ![](./images/crypt-contenedor04.png)
 
 * Escribir el password del contenedor para poder activarlo.
-* `df -hT | grep contenedor`, comprobamos que hay un dispositivo montado en la ruta contenedorXX.d.
+* `df -hT | grep contenedor`, comprobamos que hay un dispositivo montado en la ruta al `directorioXX.d`.
 * Poner archivos dentro del contenedor.
 * Reiniciar la MV.
 * Comprobar a acceder a los ficheros del contenedor cuando se pone la contraseña correcta y cuando no.
 
-> * ¿Qué ocurre si iniciamos la MV con un CDLive como Knoppix e intentamos acceder a los datos...?
+> Curiosidad: ¿Qué ocurre si iniciamos la MV con un CDLive como Knoppix e intentamos acceder a los datos...?
+>
 > * Configurar MV sin EFI para poder inciar Knoppix.
-> * `mount /home/nombre-alumno/contenedorXX.data`
+> * `mount /home/nombre-alumno/contenedorXX /home/nombre-alumno/directorioXX.d`
 
 ---
 

@@ -1,14 +1,5 @@
 
-```
-Cambios para el curso1718
-* Coordinar con actividad NAS de FUW de 1ASIR, por el parecido.
-* Cambiar tema por otro diferente. Usar nombres fáciles de escribir.
-* Revisar comando net view
-```
-
-# Samba
-
-Samba con OpenSUSE 13.2 y Windows 7.
+# Samba (con OpenSUSE y Windows)
 
 Entrega:
 * La entrega la realizaremos a través del repositorio Git.
@@ -18,18 +9,27 @@ Introducción:
 * Leer documentación proporcionada por el profesor.
 * Atender a la explicación del profesor.
 * Vídeo [LPIC-2 202 Samba Server Configuration](http://www.youtube.com/embed/Gkhl0mHpm1E")
-* Vamos a necesitar las siguientes 3 MVs:
-    * MV1: Un servidor GNU/Linux OpenSUSE 13.2 con IP estática (172.18.XX.31).
-    * MV2: Un cliente GNU/Linux OpenSUSE 13.2 con IP estática (172.18.XX.32).
-    * MV3: Un cliente Windows 7 con IP estática (172.18.XX.11).
+
+Vamos a necesitar las siguientes máquinas:
+
+| MV1: Servidor   | MV2: Cliente    | MV3: Cliente    |
+| --------------- | --------------- | --------------- |
+| OpenSUSE        | OpenSUSE        | Windows         |
+| **IP estática** | **IP estática** | **IP estática** |
+| 172.AA.XX.31    | 172.AA.XX.32    | 172.AA.XX.11    |
+| **Nombre:**     | **Nombre:**     | **Nombre:**     |
+| `smb-serverXX`  | `smb-cliXXg`    | `smb-cliXXw`    |
+
+---
 
 # 1. Servidor Samba (MV1)
 
 ## 1.1 Preparativos
-* [Configurar](../../global/configuracion-aula108.md) el servidor GNU/Linux.
+
+* [Configurar](../../global/configuracion/opensuse.md) el servidor GNU/Linux.
 Usar los siguientes valores:
     * Nombre de equipo: smb-serverXX (Donde XX es el número del puesto de cada uno).
-* Añadir en `/etc/hosts` los equipos `smb-cliXXa` y `smb-cliXXb` (Donde XX es el número del puesto de cada uno).
+* Añadir en `/etc/hosts` los equipos `smb-cliXXg` y `smb-cliXXw` (Donde XX es el número del puesto de cada uno).
 
 Capturar salida de los comandos siguientes en el servidor:
 ```
@@ -54,25 +54,23 @@ como shell `/bin/false`.
 * Dentro del grupo `piratas` incluir a los usuarios `pirata1`, `pirata2` y `supersamba`.
 * Dentro del grupo `soldados` incluir a los usuarios `soldado1` y `soldado2` y `supersamba`.
 * Dentro del grupo `todos`, poner a todos los usuarios `soldados`, `pitatas`, `supersamba` y a `smbguest`.
+* Poner a los usuarios de samba dentro del grupo `cdrom`.
 
 ## 1.3 Crear las carpetas para los futuros recursos compartidos
 
 * Capturar imagen del resultado final.
 * Vamos a crear las carpetas de los recursos compartidos con los permisos siguientes:
-    * `/srv/sambaXX/public.d`
-        * Usuario propietario `supersamba`.
-        * Grupo propietario `todos`.
-        * Poner permisos 775.
-    * `/srv/sambaXX/castillo.d`
-        * Usuario propietario `supersamba`.
-        * Grupo propietario `soldados`.
-        * Poner permisos 770.
-    * `/srv/sambaXX/barco.d`
-        * Usuario propietario `supersamba`.
-        * Grupo propietario `piratas`.
-        * Poner permisos 770.
 
-## 1.4 Instalar Samba Server
+|                 | Public          | Castillo        | Barco           |
+| --------------- | --------------- | --------------- | --------------- |
+| Directorio base | `/srv/sambaXX/` | `/srv/sambaXX/` | `/srv/sambaXX/` |
+| Carpeta         | `public.d`      | `castillo.d`    | `barco.d`       |
+| Usuario prop.   | `supersamba`    |`supersamba`     | `supersamba`    |
+| Grupo prop.     | `sambausers`    |`soldados`       | `piratas`       |
+| Permisos        | 777             | 777             | 777             |
+
+
+## 1.4 Configurar el servidor Samba
 
 * Capturar imágenes del proceso.
 * Vamos a hacer una copia de seguridad del fichero de configuración existente
@@ -82,21 +80,21 @@ como shell `/bin/false`.
 > Como estamos en OpenSUSE vamos a usar Yast.
 
 * `Yast -> Samba Server`
-    * Workgroup: `mar1617`
+    * Workgroup: `curso1819`
     * Sin controlador de dominio.
 * En la pestaña de `Inicio` definimos
     * Iniciar el servicio durante el arranque de la máquina.
     * Ajustes del cortafuegos -> Abrir puertos
 
-## 1.5 Configurar el servidor Samba
+## 1.5 Crear los recursos compartidos de Samba
 
 Vamos a configurar los recursos compartido del servidor Samba.
 Podemos hacerlo modificando el fichero de configuración o por entorno gráfico con Yast.
 
 * Capturar imágenes del proceso.
-* `Yast -> Samba Server -> Recursos compartidos`
-
-* Tenemos que montar una configuración como la siguiente:
+* `Yast -> Samba Server -> Recursos compartidos -> Configurar`.
+* Tenemos que conseguir una configuración con las secciones global, cdrom, public,
+barco, y castillo como la siguiente:
 
 > * Donde pone XX, sustituir por el núméro del puesto de cada uno
 > * `public`, será un recurso compartido accesible para todos los usuarios en modo lectura.
@@ -105,7 +103,7 @@ Podemos hacerlo modificando el fichero de configuración o por entorno gráfico 
 ```
 [global]
   netbios name = smb-serverXX
-  workgroup = mar1617
+  workgroup = cursoXXYY
   server string = Servidor de nombre-alumno-XX
   security = user
   map to guest = bad user
@@ -117,21 +115,25 @@ Podemos hacerlo modificando el fichero de configuración o por entorno gráfico 
   read only = yes
 
 [public]
+  comment = public de nombre-alumno-XX
   path = /srv/sambaXX/public.d
   guest ok = yes
   read only = yes
 
 [castillo]
+  comment = castillo de nombre-alumno-XX
   path = /srv/sambaXX/castillo.d
   read only = no
   valid users = @soldados
 
 [barco]
-  path = /srv/sambaXX/piratas.d
+  comment = barco de nombre-alumno-XX
+  path = /srv/sambaXX/barco.d
   read only = no
   valid users = pirata1, pirata2
 ```
 
+* No vale copiar y pegar el ejemplo anterior. Hay que adaptarlo a tus requisitos.
 * Abrimos una consola para comprobar los resultados.
     * `cat /etc/samba/smb.conf`
     * `testparm`
@@ -139,32 +141,37 @@ Podemos hacerlo modificando el fichero de configuración o por entorno gráfico 
 ## 1.6 Usuarios Samba
 
 Después de crear los usuarios en el sistema, hay que añadirlos a Samba.
-* `smbpasswd -a nombreusuario`, para crear clave de Samba para un usuario del sistema.
+* `smbpasswd -a USUARIO`, para crear clave Samba de USUARIO.
+    * **¡OJO!: NO te saltes este paso.**
+    * USUARIO son los usuarios que se conectarán a los recursos comartidos SMB/CIFS.
+    * Esto hay que hacerlo para cada uno de los usuarios de Samba.
 * `pdbedit -L`, para comprobar la lista de usuarios Samba.
 * Capturar imagen del comando anterior.
 
 ## 1.7 Reiniciar
 
-* Ahora que hemos terminado con el servidor, hay que reiniciar el servicio
-para que se lean los cambios de configuración.
-* Podemos hacerlo por `Yast -> Servicios`, o usar los comandos.:
-    * Servicio smb
-        * `systemctl stop smb`
-        * `systemctl start smb`
-        * `systemctl status smb`
-    * Servicio nmb
-        * `systemctl stop nmb`
-        * `systemctl start nmb`
-        * `systemctl status nmb`
-
 > Enlaces de interés:
 >
 > * [Demonios Samba y servicios relacionados](http://web.mit.edu/rhel-doc/4/RH-DOCS/rhel-rg-es-4/s1-samba-daemons.html)
 
+Ahora que hemos terminado con el servidor, hay que recargar los ficheros de configuración del servicio. Esto es, leer los cambios de configuración.
+
+Podemos hacerlo por `Yast -> Servicios`, o usar los comandos.
+* Servicio smb `systemctl reload smb`
+* Servicio nmb `systemctl reload nmb`
+
+| Comandos Servicio              | Descripción |
+| ------------------------------ | ----------- |
+| systemctl stop    SERVICE-NAME | Parar |
+| systemctl start   SERVICE-NAME | Iniciar |
+| systemctl restart SERVICE-NAME | Parar e iniciar |
+| systemctl reload  SERVICE-NAME | Volver a releer la configuración |
+| systemctl status  SERVICE-NAME | Ver estado |
+
 * Capturar imagen de los siguientes comando de comprobación:
 ```
-    sudo testparm     # Verifica la sintaxis del fichero de configuración del servidor Samba
-    sudo netstat -tap # Vemos que el servicio SMB/CIF está a la escucha
+sudo testparm  # Verifica la sintaxis del fichero de configuración del servidor Samba
+sudo lsof -i   # Vemos que el servicio SMB/CIF está a la escucha
 ```
 
 > **Comprobar CORTAFUEGOS**
@@ -175,64 +182,73 @@ máquina GNU/Linux. Deberían verse los puertos SMB/CIFS(139 y 445) abiertos.
 
 ---
 
-# 2. Windows (MV3 `smb-cliXXb`)
+# 2. Windows
 
-* [Configurar](../../global/configuracion-aula108.md) el cliente Windows.
-* Usar nombre `smb-cliXXb` y la IP que hemos establecido.
+* [Configurar](../../global/configuracion/windows.md) el cliente Windows.
+* Usar nombre y la IP que hemos establecido al comienzo.
 * Configurar el fichero `...\etc\hosts` de Windows.
 * En los clientes Windows el software necesario viene preinstalado.
+
+---
 
 ## 2.1 Cliente Windows GUI
 
 Desde un cliente Windows vamos a acceder a los recursos compartidos del servidor Samba.
 
+* Escribimos `\\ip-del-servidor-samba` y vemos lo siguiente:
+
 ![samba-win7-cliente-gui](./images/samba-win7-client-gui.png)
 
-* Comprobar los accesos de todas las formas posibles. Como si fuéramos:
-    * un `soldado`
-    * un `pirata`
-    * y/o un invitado.
-
-> * Después de cada conexión se quedan guardada la información en el cliente
-Windows (Ver comando `net use`).
-> * `net use * /d /y`, para cerrar las conexión SMB/CIFS que se ha realizado
-desde el cliente al servidor.
-
+* Acceder al recurso compartido con el usuario `invitado`
+    * `net use` para ver las conexiones abiertas.
+    * `net use * /d /y`, para borrar todas las conexión SMB/CIFS que se hadn realizado.
+* Acceder al recurso compartido con el usuario `soldado`
+    * `net use` para ver las conexiones abiertas.
+    * `net use * /d /y`, para borrar todas las conexión SMB/CIFS que se hadn realizado.
+* Acceder al recurso compartido con el usuario `pirata`
+* Ir al servidor Samba.
 * Capturar imagen de los siguientes comandos para comprobar los resultados:
     * `smbstatus`, desde el servidor Samba.
-    * `netstat -ntap`, desde el servidor Samba.
-    * `netstat -n`, desde el cliente Windows.
+    * `lsof -i`, desde el servidor Samba.
+
+---
 
 ## 2.2 Cliente Windows comandos
 
-* En el cliente Windows, para consultar todas las conexiones/recursos conectados hacemos `C:>net use`.
+* Abrir una shell de windows.
+* `net use /?`, para consultar la ayuda del comando.
+* `net use`, para consultar todas las conexiones/recursos conectados hacemos .
 * Si hubiera alguna conexión abierta la cerramos.
     * `net use * /d /y`, para cerrar las conexiones SMB.
     * `net use` ahora vemos que NO hay conexiones establecidas.
 
 Capturar imagen de los comandos siguientes:
-* Abrir una shell de windows. Usar el comando `net use /?`, para consultar la ayuda del comando.
-* Vamos a conectarnos desde la máquina Windows al servidor Samba usando el comando net.
-* Con el comando `net view`, vemos las máquinas (con recursos CIFS) accesibles por la red.
+* `net view \\IP-SERVIDOR-SAMBA`, para ver los recursos de esta máquina.
 
-## 2.3 Montaje automático
+> Para REVISAR:
+> * `net view`, para ver las máquinas (SMB/CIFS) accesibles por la red.
+> * [Error 6118](https://stackoverflow.com/questions/13676714/command-prompt-net-view-system-error-6118) que aparece el ejecutar `net view` en Windows.
 
-* El comando `net use S: \\ip-servidor-samba\recurso /USER:clave` establece
-una conexión del rescurso panaderos y lo monta en la unidad S.
+* `net use S: \\IP-SERVIDOR-SAMBA\recurso clave /USER:usuario /p:yes` crear una conexión con el recurso compartido y lo monta en la unidad S.
+    * Probar a montar el recurso `barco`.
+
+> Con la opción /p:yes hacemos el montaje persistente. De modo que se mantiene en cada reinicio de máquina.
+
+* `net use`, comprobamos.
 * Ahora podemos entrar en la unidad S ("s:") y crear carpetas, etc.
-
 * Capturar imagen de los siguientes comandos para comprobar los resultados:
     * `smbstatus`, desde el servidor Samba.
-    * `netstat -ntap`, desde el servidor Samba.
-    * `netstat -n`, desde el cliente Windows.
+    * `lsof -i`, desde el servidor Samba.
 
 ---
 
-# 3 Cliente GNU/Linux (MV2 `smb-cliXXa`)
+# 3 Cliente GNU/Linux
 
-* [Configurar](../../global/configuracion-aula108.md) el cliente GNU/Linux.
-* Usar nombre `smb-cliXXa` y la IP que hemos establecido.
+* [Configurar](../../global/configuracion/opensuse.md) el cliente GNU/Linux.
+* Usar nombre y la IP que hemos establecido al comienzo.
 * Configurar el fichero `/etc/hosts` de la máquina.
+
+---
 
 ## 3.1 Cliente GNU/Linux GUI
 
@@ -247,7 +263,7 @@ Desde en entorno gráfico, podemos comprobar el acceso a recursos compartidos SM
 > * existen otras para otros entornos gráficos. Busca en tu GNU/Linux la forma de acceder vía GUI.
 
 Ejemplo accediendo al recurso prueba del servidor Samba,
-pulsamos CTRL+L y escribimos `smb://ip-del-servidor-samba`:
+pulsamos CTRL+L y escribimos `smb://IP-SERVIDOR-SAMBA`:
 
 ![linux-gui-client](./images/linux-gui-client.png)
 
@@ -259,8 +275,9 @@ Capturar imagen de lo siguiente:
 * Comprobar que el recurso `public` es de sólo lectura.
 * Capturar imagen de los siguientes comandos para comprobar los resultados:
     * `smbstatus`, desde el servidor Samba.
-    * `netstat -ntap`, desde el servidor Samba.
-    * `netstat -n`, desde el cliente.
+    * `lsof -i`, desde el servidor Samba.
+
+---
 
 ## 3.2 Cliente GNU/Linux comandos
 
@@ -273,21 +290,22 @@ alguno haya cambiado de nombre. ¡Ya lo veremos!
 
 * Vamos a un equipo GNU/Linux que será nuestro cliente Samba. Desde este
 equipo usaremos comandos para acceder a la carpeta compartida.
-* Primero comprobar el uso de las siguientes herramientas:
-```
-sudo smbtree                       # Muestra todos los equipos/recursos de la red SMB/CIFS
-                                   # Hay que abroir el cortafuegos para que funcione.
-smbclient --list ip-servidor-samba # Muestra los recursos SMB/CIFS de un equipo concreto
-```
-* Ahora crearemos en local la carpeta `/mnt/sambaXX-remoto/corusant`.
-* MONTAJE: Con el usuario root, usamos el siguiente comando para montar un recurso
-compartido de Samba Server, como si fuera una carpeta más de nuestro sistema:
-`mount -t cifs //172.18.XX.55/castillo /mnt/sambaXX-remoto/castillo -o username=soldado1`
+
+> * Probar desde una máquina Ubuntu `sudo smbtree` (REVISAR: no muestra nada)
+>    * Esto muestra todos los equipos/recursos de la red SMB/CIFS.
+>    * Hay que parar el cortafuegos para que funcione (`systemctl stop firewalld`), o bien
+>    * ejecutar comando desde la máquina real.
+
+* Probar desde OpenSUSE: `smbclient --list IP-SERVIDOR-SAMBA`, Muestra los recursos SMB/CIFS de un equipo.
+* Ahora crearemos en local la carpeta `/mnt/remotoXX/castillo`.
+* **MONTAJE MANUAL**: Con el usuario root, usamos el siguiente comando para montar un recurso compartido de Samba Server, como si fuera una carpeta más de nuestro sistema:
+`mount -t cifs //172.AA.XX.55/castillo /mnt/remotoXX/castillo -o username=soldado1`
 
 > En versiones anteriores de GNU/Linux se usaba el comando
+
 `smbmount //smb-serverXX/public /mnt/remotoXX/public/ -o -username=smbguest`.
 
-* COMPROBAR: Ejecutar el comando `df -hT`. Veremos que el recurso ha sido montado.
+* `df -hT`, para comprobar que el recurso ha sido montado.
 
 ![samba-linux-mount-cifs](./images/samba-linux-mount-cifs.png)
 
@@ -297,23 +315,20 @@ debe aparecer en la máquina del servidor Samba. ¡Comprobarlo!
 
 * Capturar imagen de los siguientes comandos para comprobar los resultados:
     * `smbstatus`, desde el servidor Samba.
-    * `netstat -ntap`, desde el servidor Samba.
-    * `netstat -n`, desde el cliente Windows.
+    * `lsof -i`, desde el servidor Samba.
 
 ## 3.3 Montaje automático
 
-Capturar imágenes del proceso.
+* Hacer una instantánea de la MV antes de seguir. Por seguridad.
+* Capturar imágenes del proceso.
+* Reiniciar la MV.
+* `df -hT`. Los recursos ya NO están montados. El montaje anterior fue temporal.
 
-Acabamos de acceder a los recursos remotos, realizando un montaje de forma manual (comandos mount/umount).
-Si reiniciamos el equipo cliente, podremos ver que los montajes realizados de forma manual ya no están (`df -hT`).
-Si queremos volver a acceder a los recursos remotos debemos repetir el proceso de  montaje manual,
-a no ser que hagamos una configuración de  montaje permanente o automática.
+> Antes accedimos a los recursos remotos, realizando un montaje de forma manual (comandos mount/umount). Si reiniciamos el equipo cliente, podremos ver que los montajes realizados de forma manual ya no están. Si queremos volver a acceder a los recursos remotos debemos repetir el proceso de  montaje manual, a no ser que hagamos una configuración de  montaje permanente o automática.
 
 * Para configurar acciones de montaje automáticos cada vez que se inicie el equipo,
 debemos configurar el fichero `/etc/fstab`. Veamos un ejemplo:
-
-`//smb-serverXX/public /mnt/remotoXX/public cifs username=soldado1,password=clave 0 0`
-
+    * `//smb-serverXX/public /mnt/remotoXX/public cifs username=soldado1,password=clave 0 0`
 * Reiniciar el equipo y comprobar que se realiza el montaje automático al inicio.
 * Incluir contenido del fichero `/etc/fstab` en la entrega.
 
@@ -321,8 +336,27 @@ debemos configurar el fichero `/etc/fstab`. Veamos un ejemplo:
 
 # 4. Preguntas para resolver
 
+Servicio y programas:
+
+* ¿Por qué tenemos dos servicios (smb y nmb) para Samba?
+
+Usuarios:
+
 * ¿Las claves de los usuarios en GNU/Linux deben ser las mismas que las que usa Samba?
 * ¿Puedo definir un usuario en Samba llamado soldado3, y que no exista como usuario del sistema?
-* ¿Cómo podemos hacer que los usuarios soldado1 y soldado2 no puedan acceder al sistema pero sí al samba?
-(Consultar `/etc/passwd`)
+* ¿Cómo podemos hacer que los usuarios soldado1 y soldado2 no puedan acceder al sistema pero sí al samba? (Consultar `/etc/passwd`)
+
+Recursos compartidos:
+
 * Añadir el recurso `[homes]` al fichero `smb.conf` según los apuntes. ¿Qué efecto tiene?
+
+> Para REVISAR
+> * ¿Cómo pueden los clientes acceder al CDROM del servidor usando Samba?
+>    * /dev/cdrom ¿Dónde apunta? ¿Qué permisos tiene?
+>    * /dev/sr0 ¿Que permisos tiene?
+
+---
+
+# ANEXO
+
+* Cambios para el curso1718 => Revisar comando net view

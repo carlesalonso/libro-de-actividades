@@ -1,8 +1,8 @@
 # Índice de actividades
 
-`Fecha UM: 2017-07-07 10:29:41 +0100`
+`Fecha UM: 2018-10-29 09:33:13 +0000`
 
-* [idp](actividades/idp) 11
+* [idp](actividades/idp) 12
     * [aplicaciones](actividades/idp/aplicaciones) 7
         * [REVISAR](actividades/idp/aplicaciones/REVISAR) 3
             * [compilar.md](actividades/idp/aplicaciones/REVISAR/compilar.md)
@@ -27,17 +27,18 @@
         * [debian-windows_xp.md](actividades/idp/boot-loader/debian-windows_xp.md)
         * [grub](actividades/idp/boot-loader/grub) 1
             * [pendiente.md](actividades/idp/boot-loader/grub/pendiente.md)
-        * [images](actividades/idp/boot-loader/images) 5
+        * [images](actividades/idp/boot-loader/images) 3
     * [comandos](actividades/idp/comandos) 2
         * [comandos-01.md](actividades/idp/comandos/comandos-01.md)
         * [enlaces.md](actividades/idp/comandos/enlaces.md)
     * [dominios](actividades/idp/dominios) 6
-        * [files](actividades/idp/dominios/files) 18
+        * [files](actividades/idp/dominios/files) 17
         * [pdc-cliente-opensuse.md](actividades/idp/dominios/pdc-cliente-opensuse.md)
         * [pdc-cliente-ubuntu-debian.md](actividades/idp/dominios/pdc-cliente-ubuntu-debian.md)
         * [pdc-politicas.md](actividades/idp/dominios/pdc-politicas.md)
         * [pdc-winserver.md](actividades/idp/dominios/pdc-winserver.md)
         * [relacion-de-confianza.md](actividades/idp/dominios/relacion-de-confianza.md)
+    * [exposicion.md](actividades/idp/exposicion.md)
     * [instalacion](actividades/idp/instalacion) 5
         * [desatendida](actividades/idp/instalacion/desatendida) 4
             * [files](actividades/idp/instalacion/desatendida/files) 3
@@ -61,12 +62,13 @@
             * [wsus.md](actividades/idp/instalacion/servidor/wsus.md)
     * [licencias](actividades/idp/licencias) 1
         * [README.md](actividades/idp/licencias/README.md)
-    * [monitorizar](actividades/idp/monitorizar) 8
+    * [monitorizar](actividades/idp/monitorizar) 9
         * [apparmor-opensuse.md](actividades/idp/monitorizar/apparmor-opensuse.md)
         * [eventos-locales-windows-debian.md](actividades/idp/monitorizar/eventos-locales-windows-debian.md)
         * [eventos-locales-windows-opensuse.md](actividades/idp/monitorizar/eventos-locales-windows-opensuse.md)
         * [eventos-remotos-rsyslog.md](actividades/idp/monitorizar/eventos-remotos-rsyslog.md)
         * [files](actividades/idp/monitorizar/files) 2
+        * [grafana-influxdb-collectd.md](actividades/idp/monitorizar/grafana-influxdb-collectd.md)
         * [icinga-opensuse-windows.md](actividades/idp/monitorizar/icinga-opensuse-windows.md)
         * [images](actividades/idp/monitorizar/images) 10
         * [nagios-debian-windows.md](actividades/idp/monitorizar/nagios-debian-windows.md)
@@ -79,13 +81,16 @@
     * [tests](actividades/idp/tests) 1
         * [trim1.md](actividades/idp/tests/trim1.md)
 * [fuw](actividades/fuw) 8
-    * [almacenamiento](actividades/fuw/almacenamiento) 8
+    * [almacenamiento](actividades/fuw/almacenamiento) 11
         * [files](actividades/fuw/almacenamiento/files) 23
         * [iscsi-opensuse.md](actividades/fuw/almacenamiento/iscsi-opensuse.md)
         * [iscsi-windows.md](actividades/fuw/almacenamiento/iscsi-windows.md)
+        * [iscsi-ws2008.md](actividades/fuw/almacenamiento/iscsi-ws2008.md)
         * [nas-freenas.md](actividades/fuw/almacenamiento/nas-freenas.md)
+        * [nas-omv.md](actividades/fuw/almacenamiento/nas-omv.md)
         * [nas-opensuse.md](actividades/fuw/almacenamiento/nas-opensuse.md)
         * [nas-otros.md](actividades/fuw/almacenamiento/nas-otros.md)
+        * [nube-debian.md](actividades/fuw/almacenamiento/nube-debian.md)
         * [nube-opensuse132.md](actividades/fuw/almacenamiento/nube-opensuse132.md)
         * [nube.md](actividades/fuw/almacenamiento/nube.md)
     * [bios](actividades/fuw/bios) 1
@@ -105,7 +110,9 @@
         * [windows-rendimiento.md](actividades/fuw/monitorizar/windows-rendimiento.md)
     * [presupuesto](actividades/fuw/presupuesto) 1
         * [presupuesto-1-pc.md](actividades/fuw/presupuesto/presupuesto-1-pc.md)
-    * [simulador](actividades/fuw/simulador) 1
+    * [simulador](actividades/fuw/simulador) 3
+        * [ayuda.md](actividades/fuw/simulador/ayuda.md)
+        * [multiplicar-y-sumar.md](actividades/fuw/simulador/multiplicar-y-sumar.md)
         * [suma-y-resta.md](actividades/fuw/simulador/suma-y-resta.md)
     * [taller](actividades/fuw/taller) 7
         * [cpd-1-desmontar-y-montar.md](actividades/fuw/taller/cpd-1-desmontar-y-montar.md)
@@ -115,25 +122,27 @@
         * [taller-3-trastadas.md](actividades/fuw/taller/taller-3-trastadas.md)
         * [taller-4-simplificar.md](actividades/fuw/taller/taller-4-simplificar.md)
         * [taller-5-encender-led.md](actividades/fuw/taller/taller-5-encender-led.md)
-* [add](actividades/add) 13
-    * [REV](actividades/add/REV) 1
+* [add](actividades/add) 14
+    * [REV](actividades/add/REV) 2
         * [kvm.md](actividades/add/REV/kvm.md)
+        * [trim1.md](actividades/add/REV/trim1.md)
     * [clientes-ligeros](actividades/add/clientes-ligeros) 3
         * [README.md](actividades/add/clientes-ligeros/README.md)
         * [enlaces-de-interes.md](actividades/add/clientes-ligeros/enlaces-de-interes.md)
         * [images](actividades/add/clientes-ligeros/images) 5
-    * [devops](actividades/add/devops) 7
+    * [devops](actividades/add/devops) 6
         * [docker.md](actividades/add/devops/docker.md)
         * [files](actividades/add/devops/files) 4
         * [images](actividades/add/devops/images) 22
         * [puppet-debian.md](actividades/add/devops/puppet-debian.md)
         * [puppet-opensuse.md](actividades/add/devops/puppet-opensuse.md)
-        * [saltstack.md](actividades/add/devops/saltstack.md)
         * [vagrant.md](actividades/add/devops/vagrant.md)
     * [exposicion](actividades/add/exposicion) 1
         * [exposision-turismo.md](actividades/add/exposicion/exposision-turismo.md)
+    * [impresion](actividades/add/impresion) 1
+        * [windows.md](actividades/add/impresion/windows.md)
     * [ldap](actividades/add/ldap) 5
-        * [images](actividades/add/ldap/images) 11
+        * [images](actividades/add/ldap/images) 12
         * [ldap-auth-debian.md](actividades/add/ldap/ldap-auth-debian.md)
         * [ldap-auth-samba.md](actividades/add/ldap/ldap-auth-samba.md)
         * [ldap-server-auth-opensuse.md](actividades/add/ldap/ldap-server-auth-opensuse.md)
@@ -153,9 +162,10 @@
         * [images](actividades/add/samba/images) 3
         * [samba-debian.md](actividades/add/samba/samba-debian.md)
         * [samba-pdc-debian.md](actividades/add/samba/samba-pdc-debian.md)
-    * [script](actividades/add/script) 3
-        * [bash](actividades/add/script/bash) 1
+    * [script](actividades/add/script) 4
+        * [bash](actividades/add/script/bash) 2
             * [agenda.md](actividades/add/script/bash/agenda.md)
+            * [sysinfo.md](actividades/add/script/bash/sysinfo.md)
         * [quagga.md](actividades/add/script/quagga.md)
         * [ruby](actividades/add/script/ruby) 7
             * [create-and-delete-users.md](actividades/add/script/ruby/create-and-delete-users.md)
@@ -165,10 +175,11 @@
             * [files](actividades/add/script/ruby/files) 3
             * [install-and-remove.md](actividades/add/script/ruby/install-and-remove.md)
             * [kill-these-processes.md](actividades/add/script/ruby/kill-these-processes.md)
-    * [ssh](actividades/add/ssh) 5
+        * [setuid.md](actividades/add/script/setuid.md)
+    * [ssh](actividades/add/ssh) 4
         * [README.md](actividades/add/ssh/README.md)
-        * [image](actividades/add/ssh/image) 2
-        * [opensuse](actividades/add/ssh/opensuse) 11
+        * [images](actividades/add/ssh/images) 2
+        * [opensuse](actividades/add/ssh/opensuse) 5
         * [ssh-debian-windows.md](actividades/add/ssh/ssh-debian-windows.md)
     * [tareas](actividades/add/tareas) 1
         * [tareas-programadas.md](actividades/add/tareas/tareas-programadas.md)

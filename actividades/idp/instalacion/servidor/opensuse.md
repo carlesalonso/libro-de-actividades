@@ -1,20 +1,16 @@
 
-```
-Nuevo Curso 201617
-```
-
 # Servidor de actualizaciones con OpenSUSE
 
-Necesitaremos 2 MV con OpenSUSE.
-* Un servidor
-* Un cliente
+Necesitaremos 2 MV:
+* Un servidor con OpenSUSE.
+* Un cliente con OpenSUSE.
 
 ---
 
 # 1. Servidor Web
 
 Vamos a necesitar un servidor Web para que los clientes se puedan conectar
-con elservidor de actualizaciones usando el protocolo HTTP.
+con el servidor de actualizaciones usando el protocolo HTTP.
 
 * Ir a la MV servidor de actualizaciones.
 * Instalamos el servidor web Apache `zypper in apache2`
@@ -50,22 +46,21 @@ Descargar por ejemplo, paquetes geany, nano, dia, nmap y/o ipcalc.
 * `tree /var/cache/zypp/packages`, vemos una estructura de directorios con los
 archivos de los paquetes descargados.
 
-> Para descargar un repositorio entero podemos usar `wget -r URL-DEL-REPOSITORIO`.
-> Pero esto tardaría mucho tiempo.
+> INFO
+>
+> Si quisiéramos descargar un repositorio entero podriamos hacer `wget -r URL-DEL-REPOSITORIO`.
+> Este proceso tarda mucho tiempo y no lo vamos a hacer. 
 
-* Copiar los directorios/ficheros descargados desde la cache de zypper (`/var/cache/zypp/packages`)
-al directorio de nuestro repositorio local.
+* Copiar toda la estructura de directorios y ficheros desde la caché de zypper (`/var/cache/zypp/packages/*`) hasta el directorio de nuestro repositorio local.
     * Comprobamos `tree /srv/www/htdocs/repo/nombre-alumnoXX/`
 
-Ahora hay que convertir el directorio local en un repositorio.
-* Instalar `createrepo`.
-* Usar createrepo:
-    * `vdir /srv/www/htdocs/repo/nombre-alumnoXX/`, ver estado actual.
-    * `createrepo -v /srv/www/htdocs/repo/nombre-alumnoXX/`, crear índices.
-        * Tiene que mostrar una lista de todos los paquetes detectados en este repositorio local.
-    * `vdir /srv/www/htdocs/repo/nombre-alumnoXX/`, comprobar.
-
-> Se tiene que crear un subcarpeta `repodata` con ficheros xml dentro.
+Ahora hay que convertir el directorio local en un repositorio. Para ello vamos a usar la herramienta `createrepo`.
+* Instalar la herramienta `createrepo`.
+* Comprobamos el estado actual del repositorio, `vdir /srv/www/htdocs/repo/nombre-alumnoXX/`.
+* Ejecutamos la herramienta para crear los índices de nuestro repositorio, `createrepo -v /srv/www/htdocs/repo/nombre-alumnoXX/`.
+    * Tiene que mostrar una lista de todos los paquetes detectados en este repositorio local.
+* Comprobamos el estado final de nuestro repositorio, `vdir /srv/www/htdocs/repo/nombre-alumnoXX/`.
+    * Se tiene que haber creado un subcarpeta `repodata` con ficheros xml dentro.
 
 Se pueden compartir los paquetes de este repositorio al resto de equipo de la red
 usando diferentes protocolos (http, nfs, ftp/tftp, etc.). Nosotros hemos elegido usar
@@ -73,37 +68,24 @@ el protocolo HTTP (Servidor Web).
 
 ---
 
-# 3. Cliente del repositorio YAS
+# 3. Cliente del repositorio 
 
 * Ir a otra MV OpenSUSE
-Comprobar acceso:
-* Abrir navegador y poner URL `http://ip-del-servidor/repo/nombre-alumnoXX/repodata/repomd.xml`
+* Comprobar acceso:
+    * Abrir navegador y poner URL `http://ip-del-servidor/repo/nombre-alumnoXX/repodata/repomd.xml`
     * Debe verse el contenido del fichero XML.
 
 Vamos a añadir nuestro repositorio a esta MV.
+
 * Ir a `Yast -> Repositorios`
-* Añadir.
+* Añadir nuevo repositorio.
 * Seleccionar: HTTP y Descargar archivos de descripción de repositorio
-* Siguiente.
-* Editar partes de la URL.
-    * Nombre de repositorio: `repo-nombre-alumnoXX`
-    * Protocolo: HTTP
-    * Nombre del servidor: ip-del-servidor
-    * Puerto: 80
-    * Directorio: `/repo/nombre-alumnoXX/`
-    * Autenticación: Anónimo
-
-* Hacer captura de la lista de repositorios que tengan activos.
-
-> En mi caso me aparecen los siguientes:
->
-> * OpenSUSE Leap 42.2-Update-Non-Oss,
-> * OpenSuse Leap 42.2-Non-Oss
-> * OpenSuse Leap 42.2-Oss
-> * OpenSuse Leap 42.2-Update
-
-* Deshabilitar(propiedad activar OFF) todos los repositorios.
-* Habilitar(propiedad activar ON) sólo el `repo-nombre-alumnoXX`
+* Nombre de repositorio: `repo-nombre-alumnoXX`
+* URL del repositorio: `http://ip-del-servidor/repo/nombre-alumnoXX/`
+* Autenticación: Anónimo
+* Hacer captura de la lista de repositorios actual. Para ver todos los que tenemos habilitados al inicio.
+* Deshabilitar todos los repositorios.
+* Habilitar sólo el `repo-nombre-alumnoXX`
 * Aceptar y cerrar Yast.
 
 ---

@@ -6,6 +6,7 @@
 
 Enlace de interés:
 * [git - la guía sencilla](http://rogerdudler.github.io/git-guide/index.es.html)
+* [Guía de instalación y uso de git en Windows](https://github.com/oscarmoreira11/Guides/blob/master/Github-Windows/README.md)
 
 ### Servidor GIT en Internet:
 

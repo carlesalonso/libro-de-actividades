@@ -1,6 +1,8 @@
 
 # VirtualBox y Debian
 
+## Personalizar la MAC de la tarjeta de red
+
 * Configurar [MAC](general.md) de la máquina virtual.
 
 ## Instalar las Guest Addittions en Debian
@@ -30,3 +32,16 @@ En caso contrario haremos:
 >
 > En Debian8 XFCE se requiere instalar previamente los siguientes paquetes:
 > `apt-get install gcc make linux-headers-$(uname -r)`
+
+---
+
+# ANEXO
+
+## Instalar las Guest Additions en Lubuntu/Debian
+
+    Abrir terminal
+    Nos convertimos en superusuario: sudo bash
+    Instalamos varios paquetes: apt-get install gcc make linux-headers-$(uname -r)
+    Insertado ISO Guest Additions: VBox -> Dispositivos -> Guest Additions
+    Por terminal: cd /media/nombre-usuario/VBOX...
+    Por teminal ejecutamos programa: ./VBoxLinux...

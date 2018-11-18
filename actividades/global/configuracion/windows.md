@@ -1,49 +1,67 @@
 
-
-Documentos relacionados
-* Configurar [VirtualBox](../virtualbox/general.md)
-* Configurar [Acceso remoto](../acceso-remoto/windows7.md)
+> Documentos relacionados
+>
+> * Configurar [VirtualBox](../virtualbox/general.md)
+> * Configurar [Acceso remoto](../acceso-remoto/windows7.md)
+> * Configurar [Firewall](../firewall.md).
 
 # Configurar MV Windows 7
 
+## Introducción
+
 > * Donde aparezca AA debemos poner el código asignado al aula:
 >     * 18 para el aula108
->     * 19 para el aual109
+>     * 19 para el aula109
 > * Donde aparezca XX debemos poner el código asignado al alumno.
->
-> Para averiguar XX ejecutar en la máquina real, `ip a` o `ifconfig` o `if a s`, si muestra IP 172.16.8.30 entonces XX=30.
 
-Configuración de la máquina Windows 7 Enterprise:
-* Para prevenir la duplicidad de la MAC de la tarjeta de red puente podemos poner `080027AAXXNN`.
-* Configuramos el interfaz de red puente en modo estático.
+---
+
+## VirtualBox
+
+* Crear la MV.
+* Configuración de red en modo puente.
+
+---
+
+## Durante el proceso de Instalación
+
+* El usuario debe ser el `nombre-del-alumno`. Todos los nombres deben estar en minúsculas.
+Sin usar caracteres especiales como ñ, tildes, espacios, etc.
+* Nombre de equipo: `primer-apellido-del-alumno+XXw1`.
+    * Por ejemplo: vargas30w1
+    * El nombre NetBIOS sólo puede tener 16 caractéres.
+    * Si tenemos varias máquinas las llamaremos vargas30w1, vargas30w2, vargas30w3, etc.
+* Grupo de trabajo: `curso1819` (Modificar los números al curso actual)
+* Configuramos el interfaz de red en modo estático.
 * IP: `172.AA.XX.11` (Donde XX corresponde al nº de cada puesto).
     * Si tenemos varias máquinas usaremos las IP 172.AA.XX.12, 172.AA.XX.13, etc.
     * Máscara de red: `255.255.0.0`
     * Gateway: `172.AA.0.1`
     * Servidor DNS: `8.8.4.4`
-* Nombre de equipo: `primer-apellido-del-alumno+XXw`.
-    * El nombre de equipo se cambia en `Inicio -> Equipo -> (Botón derecho) -> Propiedades`
-    * Por ejemplo: vargas30w
-    * El nombre NetBIOS sólo puede tener 16 caractéres.
-    * Si tenemos varias máquinas las llamaremos vargas30w, vargas30x, vargas30y, etc.
-* Los nombres de usuario, máquina y dominio deben estar en minúsculas.
-Sin usar caracteres especiales como ñ, tildes, espacios, etc.
-* Grupo de trabajo: `curso1516` (Modificar los números al curso actual)
-* Tarjeta de red VBox en modo puente.
-* Configurar [acceso remoto](../acceso-remoto/windows7.md).
-* Configurar [firewall](../firewall.md).
+
+---
+
+## Después de la Instalación
+
+* El nombre de equipo ir a `Inicio -> Equipo -> (Botón derecho) -> Propiedades`
+
+---
 
 ## Comprobaciones finales
 
-Capturar imágenes de las configuraciones desde *PowerShell*.
+Ejecutar los siguientes comandos *PowerShell* para comprobar la configuración:
+
 ```
-date
-hostname
-ipconfig
-route PRINT
-nslookup www.iespuertodelacruz.es
-ping 8.8.4.4
+date                  # Fecha actual
+whoami                # Nombre del usuario
+hostname              # Nombre del equipo
+ipconfig              # Configuración de red
+route PRINT           # Puerta de enlace (Gateway)
+ping 8.8.4.4          # Conectividad con Internet
+nslookup www.nba.com  # Configuración DNS
 ```
+
+---
 
 ## Periodo de pruebas
 
@@ -57,7 +75,10 @@ Al finalizar este plazo de tiempo podemos:
 Podemos renovar varias veces, pero el tiempo máximo que podemos usar el SO antes de activarlo
 es de 90 días.
 
-> Enlaces de interés:
+---
+
+> Enlaces de interés
 >
+> * Descargar MV's Windows de 90 días: https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/?ranMID=24542&ranEAID=je6NUbpObpQ&ranSiteID=je6NUbpObpQ-W0V2C8ws0lPKDJhnOzgr.w&epi=je6NUbpObpQ-W0V2C8ws0lPKDJhnOzgr.w&irgwc=1&OCID=AID681541_aff_7593_1243925&tduid=(ir_w-gzCwyO92LwwJ23Ax1SsytrUkgxfZX9jzr%3A1Q0)(7593)(1243925)(je6NUbpObpQ-W0V2C8ws0lPKDJhnOzgr.w)()&irclickid=w-gzCwyO92LwwJ23Ax1SsytrUkgxfZX9jzr%3A1Q0)
 > * [Bash en Windows10](http://www.xataka.com/aplicaciones/asi-es-usar-la-consola-bash-de-ubuntu-en-windows-10)
 > * [Cómo aceder a una partición GNU/Linux desde Windows](https://es.opensuse.org/SDB:Acceder_a_la_particion_de_GNU/Linux_desde_Windows)

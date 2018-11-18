@@ -18,10 +18,13 @@ Vamos a practicar con un SO en live CD.
 * Probar el sistema.
 * Abrir un terminal y capturar la salida de los siguientes comandos:
 ```
-date
 ip a
 sudo blkid
+date
+whoami
+hostname
 ```
+
 * Crear algunos archivos y carpetas.
 * Reiniciar el SO live.
 * Comprobar que los archivos/carpetas creados anteriormente no se han guardado.
@@ -39,13 +42,16 @@ Nombre del equipo : 1er apellido en minúsculas
 ```
 * Abrir un terminal *PowerShell*, y capturar la salida de los siguientes comandos:
 ```
-date
 ipconfig
+date
+whoami
 hostname
 ```
 
 > Cuando terminamos la instalación conviene quitar la ISO de instalación de la unidad
 de CD/DVD para que no se inicie al arrancar la MV.
+
+---
 
 # GNU/Linux OpenSUSE
 
@@ -55,7 +61,7 @@ de CD/DVD para que no se inicie al arrancar la MV.
 ```
 Nombre de usuario      : nombre del alumno en minúsculas
 Nombre del equipo/host : 1er apellido en minúsculas
-Nombre dominio         : 2º apellido en minúsculas
+Nombre dominio         : curso1819
 ```
 > Nombre de host es lo mismo que nombre de máquina
 
@@ -70,11 +76,15 @@ Nombre dominio         : 2º apellido en minúsculas
 
 * Abrir un terminal y capturar la salida de los siguientes comandos:
 ```
-hostname -f
-date
 ip a
 sudo blkid
 sudo fdisk -l
+date
+whoami
+hostname -f
 ```
 
-> [Vídeo Install OpenSUSE] (http://www.youtube.com/embed/nC8n1Pg6gto?list=PL3E447E094F7E3EBB)
+> Cuando terminamos la instalación conviene quitar la ISO de instalación de la unidad
+de CD/DVD para que no se inicie al arrancar la MV.
+>
+> [Vídeo Install OpenSUSE](http://www.youtube.com/embed/nC8n1Pg6gto?list=PL3E447E094F7E3EBB)

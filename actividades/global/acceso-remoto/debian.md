@@ -1,21 +1,31 @@
 
 # Configurar acceso remoto SSH en Debian
 
-## Instalación
+# Instalar servicio SSH
 
-* Para averiguar si lo tenemos instalado: `dpkg -l ssh`.
-* Instalar openssh-server para que el profesor pueda acceder
-de forma remota:
-    * `apt-get install ssh`, por comandos.
+* Para averiguar si lo tenemos instalado: `dpkg -l *ssh*`.
+* Instalar servidor SSH para que el profesor pueda acceder de forma remota:
+    * `apt-get install openssh-server`, por comandos.
     * Usar gestor de paquetes del entorno gráfico.
-* Modificar el fichero `/etc/ssh/sshd_config`:
+
+---
+
+# Cambiar la configuración de SSH
+
+* Entrar en la consola con el usuario `root`.
+* Editar el fichero `/etc/ssh/sshd_config`:
      * Quitar y/o comentar la línea `PermitRootLogin without-password`.
-     * Dejar la siguiente configuración `PermitRootLogin yes`.
-* Reiniciar el servicio: `service ssh restart`
+     * Dejar la siguiente configuración `PermitRootLogin yes`. SIN ALMOHADILLA.
+     Las almohadillas `#` al comienzo de la línea la desactivan/deshabilitan/la comentan.
+* `systemctl restart sshd`, iniciar el servicio. Antes se hacía con `service ssh restart`.
+* `systemctl enable sshd`, para asegurarnos de que se va a iniciar el servicio cuando se encienda la máquina.
+* `systemctl status sshd`, comprobamos.
 
-## Comprobación
+---
 
-Para comprobar el acceso remoto SSH, vamos a la máquina real
-y ejecutamos:
-* `ssh nombre-del-alumno@ip-de-la-mv` para entrar en la MV
+# Comprobación
+
+Para comprobar el acceso remoto SSH:
+* Ir a otra máquina con GNU/Linux y abrir una consola.
+* `ssh root@ip-de-la-mv` para entrar en la MV.
 * `hostname -f` para ver el nombre de la MV donde hemos entrado.

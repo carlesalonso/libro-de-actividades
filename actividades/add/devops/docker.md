@@ -1,9 +1,4 @@
 
-```
-* Nueva práctica del curso 201617.
-* Para el curso 201718, mover contenedores entre máquinas.
-```
-
 # 1. Introducción
 
 Es muy común que nos encontremos desarrollando una aplicación y llegue
@@ -30,7 +25,9 @@ Nos aseguraremos que tiene una versión del Kernel 3.10 o superior (`uname -a`).
 
 # 3. Instalación y primeras pruebas
 
-* Enlaces de interés [Docker installation on SUSE](https://docs.docker.com/engine/installation/linux/SUSE)
+* Enlaces de interés:
+    * [EN - Docker installation on SUSE](https://docs.docker.com/engine/installation/linux/SUSE)
+    * [ES - Curso de Docker en vídeos](jgaitpro.com/cursos/docker/)
 * Ejecutar como superusuario:
 ```
 zypper in docker              # Instala docker
@@ -45,8 +42,9 @@ usermod -a -G docker USERNAME # Añade permisos a nuestro usuario
 docker images           # Muestra las imágenes descargadas hasta ahora
 docker ps -a            # Muestra todos los contenedores creados
 docker run hello-world  # Descarga y ejecuta un contenedor con la imagen hello-world
+                        # Sólo se muestra unos mensajes en pantalla.
 docker images
-docker ps -a
+docker ps -a            # El contenedor está estado 'Exited'
 ```
 
 ---
@@ -68,14 +66,26 @@ debemos editar el fichero `/etc/sysconfig/SuSEfirewall2` y poner `FW_ROUTE="yes"
 
 Reiniciar el equipo para que se apliquen los cambios.
 
+## 4.1 Más comandos
+
+Información sobre otros comandos útiles:
+
+* `docker stop CONTAINERID`, parar un contenedor que estaba iniciado.
+* `docker start CONTAINERID`, inicia un contenedor que estaba parado.
+* `docker attach CONTAINERID`, conecta el terminal actual con el interior de contenedor.
+* `docker ps`, muestra los contenedores en ejecución.
+* `docker ps -a`, muestra todos los contenedores en ejecución o no.
+* `docker rm CONTAINERID`, eliminar un contenedor.
+* `docker rmi IMAGENAME`, eliminar una imagen.
+
 ---
 
-# 5. Crear un contenedor manualmente
+# 5. Creación manual
 
 Nuestro SO base es OpenSUSE, pero vamos a crear un contenedor Debian8,
 y dentro instalaremos Nginx.
 
-## 5.1 Crear una imagen
+## 5.1 Crear una imagen manualmente
 
 * Enlace de interés: [Cómo instalar y usar docker](http://codehero.co/como-instalar-y-usar-docker/)
 
@@ -83,18 +93,17 @@ y dentro instalaremos Nginx.
 docker images          # Vemos las imágenes disponibles localmente
 docker search debian   # Buscamos en los repositorios de Docker Hub
                        # contenedores con la etiqueta `debian`
-docker pull debian:8   # Descargamos contenedor `debian:8` en local
-docker pull opensuse
+docker pull debian:8   # Descargamos una imagen `debian:8` en local
 docker images
 docker ps -a           # Vemos todos los contenedores
 docker ps              # Vemos sólo los contenedores en ejecución
 ```  
 
-* Vamos a crear un contenedor con nombre `mv_debian` a partir de la
+* Vamos a crear un contenedor con nombre `con_debian` a partir de la
 imagen `debian:8`, y ejecutaremos `/bin/bash`:
 
 ```
-docker run --name=mv_debian -i -t debian:8 /bin/bash
+docker run --name=con_debian -i -t debian:8 /bin/bash
 
 (Estamos dentro del contenedor)
 root@IDContenedor:/# cat /etc/motd            # Comprobamos que estamos en Debian
@@ -140,7 +149,7 @@ abrimos otra ventana de terminal y busquemos el IDContenedor:
 ```
 david@camaleon:~/devops> docker ps
 CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS         PORTS  NAMES
-7d193d728925   debian:8   "/bin/bash"   2 minutes ago    Up 2 minutes          mv_debian
+7d193d728925   debian:8   "/bin/bash"   2 minutes ago    Up 2 minutes          con_debian
 ```
 
 * Ahora con esto podemos crear la nueva imagen a partir de los cambios que realizamos sobre la imagen base:
@@ -156,14 +165,14 @@ seguir el formato `nombreusuario/nombreimagen`.
 
 ```
 docker ps
-docker stop mv_debian  # Paramos el contenedor
+docker stop con_debian  # Paramos el contenedor
 docker ps
 docker ps -a           # Vemos el contenedor parado
 docker rm IDcontenedor # Eliminamos el contenedor
 docker ps -a
 ```
 
-## 5.2 Crear contenedor
+## 5.2 Crear contenedor con Nginx
 
 Bien, tenemos una imagen con Nginx instalado, probemos ahora la magia de Docker.
 
@@ -171,7 +180,7 @@ Bien, tenemos una imagen con Nginx instalado, probemos ahora la magia de Docker.
 ```
 docker ps
 docker ps -a
-docker run --name=mv_nginx -p 80 -t dvarrui/nginx /root/server.sh
+docker run --name=con_nginx -p 80 -t dvarrui/nginx /root/server.sh
 Booting Nginx!
 Waiting...
 ```
@@ -193,25 +202,19 @@ conectaremos con el servidor Nginx que se está ejecutando dentro del contenedor
 
 ![docker-url-nginx.png](./files/docker-url-nginx.png)
 
+* Comprobar el acceso a `holamundo.html`.
 * Paramos el contenedor y lo eliminamos.
 ```
 docker ps
-docker stop mv_nginx
+docker stop con_nginx
 docker ps
 docker ps -a
-docker rm mv_nginx
+docker rm con_nginx
 docker ps -a
 ```
 
 > Como ya tenemos una imagen docker, podemos crear nuevos contenedores
 cuando lo necesitemos.
-
-## 5.3 Más comandos
-
-Información sobre otros comandos útiles:
-
-* `docker start CONTAINERID`, inicia un contenedor que estaba parado.
-* `docker attach CONTAINERID`, conecta el terminal actual con el interior de contenedor.
 
 ---
 
@@ -230,7 +233,10 @@ docker ps -a
 
 ## 6.2 Preparar ficheros
 
-* Crear directorio `/home/nombre-alumno/dockerXX`, poner dentro los siguientes ficheros.
+* Crear directorio `/home/nombre-alumno/dockerXX`, poner dentro los siguientes ficheros:
+    * Dockerfile
+    * holamundo.html
+    * server.sh
 * Crear el fichero `Dockerfile` con el siguiente contenido:
 ```
 FROM debian:8
@@ -256,27 +262,27 @@ CMD ["/root/server.sh"]
 > Los ficheros `server.sh` y `holamundo.html` que vimos en el apartado anterior,
 tienen que estar en el mismo directorio del fichero `Dockerfile`.
 
-## 6.3 Crear imagen
+## 6.3 Crear imagen desde el `Dockerfile`
 
 El fichero [Dockerfile](./files/Dockerfile) contiene la información
 necesaria para contruir el contenedor, veamos:
 
 ```
-cd /home/alumno/docker            # Entramos al directorio del Dockerfile
-docker images                     # Consultamos las imágenes disponibles
-docker build -t dvarrui/nginx2 .  # Construye imagen a partir del Dockefile
-                                  # OJO el punto es necesario
-docker images                     # Debe aparecer nuestra nueva imagen
+cd /home/nombre-del-alumno/dockerXX # Entramos al directorio del Dockerfile
+docker images                       # Consultamos las imágenes disponibles
+docker build -t dvarrui/nginx2 .    # Construye imagen a partir del Dockefile
+                                    # ¡¡¡OJO el punto final es necesario!!!
+docker images                       # Debe aparecer nuestra nueva imagen
 ```
 
 ## 6.4 Crear contenedor y comprobar
 
-* A continuación vamos a crear un contenedor con el nombre `mv_nginx2`,
-a partir de la imagen `dvarrui/nginx`, y queremos que este contenedor
+* A continuación vamos a crear un contenedor con el nombre `con_nginx2`,
+a partir de la imagen `dvarrui/nginx2`, y queremos que este contenedor
 ejecute el programa `/root/server.sh`.
 
 ```
-docker run --name mv_nginx2 -p 80 -t dvarrui/nginx2 /root/server.sh
+docker run --name=con_nginx2 -p 80 -t dvarrui/nginx2 /root/server.sh
 ```
 
 * Desde otra terminal hacer `docker...`, para averiguar el puerto de escucha
@@ -297,17 +303,18 @@ del servidor Nginx.
 
 Crear un imagen de contenedor:
 * `docker ps`, muestra los contenedores que tengo en ejecución.
-* `docker commit -p 30b8f18f20b4 container-backup`, grabar una imagen de nombre "container-backup" a partir del contenedor 30b8f18f20b4.
-* `docker images`comprobar que se ha creado la imagen "container-backup".
+* `docker commit -p CONTAINERID nombre-alumno/backupXX`, grabar una imagen de nombre "nombre-alumno/backupXX" a partir del contenedor CONTAINERID.
+* `docker images`comprobar que se ha creado la imagen "nombre-alumno/backupXX".
 
 Exportar imagen docker a fichero:
-* `docker save -o ~/container-backup.tar container-backup`, guardamos la imagen
-"container-backup" en un fichero tar.
+* `docker save -o ~/backupXX.tar nombre-alumno/backupXX`, guardamos la imagen
+"nombre-alumno/backupXX" en un fichero tar.
 
 Importar imagen docker desde fichero:
 * Nos llevamos el tar a otra máquina con docker instalado, y restauramos.
-* `docker load -i ~/container-backup.tar`, cargamos la imagen docker a partir del fichero tar.
+* `docker load -i ~/backupXX.tar`, cargamos la imagen docker a partir del fichero tar.
 * `docker images`, comprobamos que la nueva imagen está disponible.
+* Crear contenedor a partir de la nueva imagen.
 
 ---
 
@@ -320,12 +327,34 @@ pararlos y/o destruirlos.
 
 # ANEXO
 
-## A.1 Enlaces de interés
+## A.1 supervisord
+
+Dentro del contenedor:
+* Instalar el supervidor `apt-get install -y supervisor`
+* Crear una configuración personalizado para Nginx con Supervidor. Crear `/etc/supervisor/conf.d/supervisord.conf` con el siguiente contenido:
+```
+[supervisord]
+nodaemon=true
+
+[program:nginx]
+command = /usr/sbin/nginx -g "daemon off;"
+username = www-data
+autorestart = true
+stdout_logfile = /dev/stdout
+stdout_logfile_maxbytes = 0
+stderr_logfile = /dev/stderr
+stderr_logfile_maxbytes = 0
+```
+* Hacemos la imagen dvarrui/nginx.
+* En la máquina real podemos invocar el contenedor de la siguiente forma:
+`docker run --name=con_nginx -p 80 -t dvarrui/nginx /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf`
+
+## A.2 Enlaces de interés
 
 * [Docker for beginners](http://prakhar.me/docker-curriculum/)
 * [getting-started-with-docker](http://www.linux.com/news/enterprise/systems-management/873287-getting-started-with-docker)
 
-## A.2 Kubernetes
+## A.3 Kubernetes
 
 Kubernetes (commonly referred to as "K8s") is an open source container cluster manager originally designed by Google and donated to the Cloud Native Computing Foundation. It aims to provide a "platform for automating deployment, scaling, and operations of application containers across clusters of hosts".[3] It usually works with the Docker container tool and coordinates between a wide cluster of hosts running Docker.
 

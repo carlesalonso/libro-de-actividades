@@ -1,7 +1,7 @@
 
 # Introducción
 
-* En esta práctica vamos a montar un PDC (Controlador Primario de Dominio) con Windows 2008 Server.
+* En esta práctica vamos a montar un PDC (Controlador Primario de Dominio) con Windows 2012 Server (Anteriormente usábamos Windows 2008 Server).
 * Leer/consultar la documentación de la unidad.
 * Realizaremos las prácticas en MV's que pueden estar todas en el mismo PC o en varios diferentes.
 
@@ -11,6 +11,7 @@
 
 Necesitaremos:
 * 1 MV con Windows 2008 Server Enterprise ( [Consultar configuración](../../global/configuracion/windows-server.md)).
+    * Poner como DNS1 el valor `127.0.0.1`.
 * 2 MV con Windows 7 Enterprise
 ( [Consultar configuración](../../global/configuracion/windows.md)).
 
@@ -41,12 +42,33 @@ paquetes/funciones/servicios, y acceder a los paneles de administración de los 
 >     * En realidad podríamos poner cualquier nombre, pero lo haremos según indique el profesor, para organizar mejor las distintas máquinas de la clase.
 >     * Además los nombres de dominio NO debe ser muy largos. Preferiblemente menos de 10 letras, para evitar problemas con los clientes Windows anteriores a Vista/7/8.
 
+
+## Instalar en Windows 2012 Server
+
+Instalación:
+* Hacer una instántanea de la MV antes de nada.
+* Ir a `Inicio -> Administrar el servidor -> Agregar roles`.
+(Servicio de Dominio de Directorio Activo y el Servicio DNS).
+* Ir a Configurar Directorio Activo.
+    * Crear un bosque nuevo => SI
+    * FQDN del dominio => `segundoapellidoXXdom.curso1718` # Este es el nombre del dominio
+    * Nivel funcional del bosque => Windows Server 2012 R2
+    * Servidor DNS => SI
+    * Carpetas de almacenamiento => Dejar valores por defecto.
+
+> INFO [Advertencia con la delegación del servicio DNS](https://social.technet.microsoft.com/Forums/es-ES/d77ff7bb-0204-4cfd-94fd-c5160f794793/problema-durante-dcpromo?forum=wsades)
+
+* Al terminar hay que reiniciar el sistema.
+* Capturar imagen de `Panel del servidor` donde se muestren los servicios instalados.
+
+## Instalar en Windows 2008 Server
+
 Instalación:
 * Hacer una instántanea de la MV antes de nada.
 * Para activar la función de controlador de dominios podemos hacerlo de dos formas:
-    * Abrir una consola (cmd) y ejecutar el comando `dcpromo`.
-    * Ir a `Inicio -> Administrar el servidor -> Agregar funciones`.
+    * En Windows 2012 Server ir a `Inicio -> Administrar el servidor -> Agregar roles`.
     (Servicio de Dominio de Directorio Activo y el Servicio DNS).
+    * En Windows 2008 Server podemos abrir una consola (cmd) y ejecutar el comando `dcpromo`.
 
 Veamos imagen del comando `dcpromo` en ejecución:
 
@@ -57,7 +79,7 @@ siguientes valores:
 ```
 * Modo experto => NO
 * Crear un dominio nuevo de un bosque nuevo => SI
-* FQDN del dominio => `segundoapellidoXXdom.curso1617` # Este es el nombre del dominio
+* FQDN del dominio => `segundoapellidoXXdom.curso1718` # Este es el nombre del dominio
 * Nivel funcional del bosque => Windows Server 2008
 * Servidor DNS => SI
 * Carpetas de almacenamiento => Dejar valores por defecto.
@@ -69,7 +91,7 @@ siguientes valores:
 
 * Al terminar hay que reiniciar el sistema.
 
-Vemos imagen, donde podemos comprobar que se han instalado varias "funciones" para controlar el dominio:
+Vemos imagen, donde podemos comprobar que se han instalado varios "roles" para controlar el dominio:
 
 ![pdc-admin-funciones](./files/pdc-admin-funciones.png)
 
@@ -78,6 +100,13 @@ Veamos imagen de configuración de nuestro servidor:
 ![pdc-config-inicial](./files/pdc-config-inicial.png)
 
 > Enlace de interés sobre [cómo recombrar un dominio de Windows Server 2008](http://www.cesarherrada.com/2012/06/como-renombrar-un-dominio-en-windows-server-2008.html)
+
+## Comprobaciones
+
+* Ir a `Herramientas -> DNS` para comprobar que aparece dentro
+de `Zona de búsqueda directa` nuestro `nombre-de-dominio`.
+* Abrir una consola y ejecutar `nslookup nombre-de-dominio`. Debe aparecer
+la IP de nuestro servidor PDC.
 
 ---
 
@@ -92,15 +121,17 @@ usuario local, usuario del dominio, equipo del dominio, grupo local, grupo del d
 
 Vamos a crear usuarios y grupos del dominio:
 * Ir a `Inicio -> Herramientas Administrativas -> Usuarios y Equipos de Active Directory`
-* Crear el grupo `jedi1617`:
+* Crear el grupo `jedi1718`:
     * Ámbito global
     * Tipo Seguridad
     * Con los siguientes usuarios de dominio: `yoda`, y `obiwan`.
 * No confundir usuarios locales con usuarios del dominio.
-* Crear el grupo `sith1617`:
+* Crear el grupo `sith1718`:
     * Ámbito global
     * Tipo Seguridad
     * Con los siguientes usuarios de dominio: `vader` y `maul`.
+
+> Información sobre [Tipos y ámbitos de grupo en Windows Server](https://es.slideshare.net/cesartg65/tipos-y-mbitos-de-grupo-windows-server)
 
 Vemos imagen con los usuarios del dominio creados:
 
@@ -110,21 +141,20 @@ Vemos imagen con los usuarios del dominio creados:
 
 # 4. Equipos del dominio
 
+## 4.1 Preparativos
+
 ```
 MV's CLIENTES:
-* Necesitaremos 2 MV's con Windows 7 profesional, que actuarán de clientes o equipos del dominio.
+* Necesitaremos 2 MV's con Windows 7, que actuarán como equipos del dominio.
 * Podemos crear una MV, y luego clonarla, modificando la MAC de la segunda MV, para
   no tener problemas de conectividad por tarjetas de red duplicadas.
-
-FECHA/HORA
-* Es muy importante que todos los equipos estén bien sincronizados en cuanto al reloj.
-  No puede haber diferencias de más de 5 minutos.
-
-RED:
-* Además cada cliente debe tener como DNS1 la IP del PDC, y como DNS2 al 8.8.4.4.
 ```
 
 * [Configurar las MVs](../../global/configuracion/windows.md)
+    * **FECHA/HORA**: Es muy importante que todos los equipos estén bien sincronizados en cuanto al reloj. No puede haber diferencias de más de 5 minutos.
+    * **RED**: Además cada cliente debe tener como DNS1 la IP del PDC, y como DNS2 al 8.8.4.4.
+    * Abrir una consola y ejecutar `nslookup nombre-de-dominio`. Debe aparecer
+la IP de nuestro servidor PDC.
 * Unir el equipo cliente al dominio.
     * Ir a `Equipos (Botón derecho) -> Propiedades -> Cambiar configuración -> Cambiar -> Dominio (Escribir el nombre del dominio) -> Aceptar`.
 
@@ -132,7 +162,7 @@ Veamos imagen de ejemplo:
 
 ![pdc-unir-al-dominio](./files/pdc-unir-al-dominio.png)     
 
-## 4.1 Problemas en la unión al dominio
+## 4.2 Problemas en la unión al dominio
 
 Espero que no tengas problemas y puedas saltar este apartado, si no es así... sigue leyendo.
 
@@ -140,25 +170,39 @@ Si tuviéramos poblemas al realizar esta tarea de unión del equipo al dominio, 
 
 * Esperar 5 minutos y repetir el proceso. Las redes SMB/CIFS tardan un tiempo en propagar la información de los equipos por la red.
 * Volver a comprobar que todas las configuraciones son correctas. Repite el paso uno (NOTA: Pon un compañero contigo mientras lo haces. 4 ojos ven más que 2).
+* Si tenemos problemas con el DNS probar a configurar únicamente el DNS1 (ip del PDC).
 * Consultar la información que contiene el servidor DNS del W2k8server. Si está vacía probar a resinstalar AD y DNS en W2k8server
 (NOTA: Una configuración incorrecta del servidor DNS hará que no se puedan unir los equipos al dominio).
 * Probar a poner como puerta de enlace del cliente la IP del servidor PDC.
-* Configurar las másquinas servidor y cliente en la misma red interna de VirtualBox (Consultar configuración de red de VirtualBox) y vuelve a intentarlo (NOTA: Pueden darse problemas si se repiten IP's no nombres de máquinas en la red. Al crear una red interna tenemos una zona aislada bajo nuestro control).
+* Configurar las máquinas servidor y cliente en la misma red interna de VirtualBox (Consultar configuración de red de VirtualBox) y vuelve a intentarlo (NOTA: Pueden darse problemas si se repiten IP's no nombres de máquinas en la red. Al crear una red interna tenemos una zona aislada bajo nuestro control).
 * ¿Repetimos?
 
-## 4.2 Comprobaciones
+## 4.3 Comprobaciones
 
-Comprobar que podemos entrar en los equipos cliente usando los usuarios del dominio.
+Entrar en los equipos cliente usando los usuarios del dominio.
+Podemos comprobarlos por entorno gráfico o usando comandos.
+
+### Por entorno gráfico
 
 ![pdc-login-cliente](./files/pdc-login-cliente.png)
 
-* Para entrar como usuario local poner "VARGAS2A\profesor". Esto es, "nombre-de-máquina\nombre-usuario-local".
+* Ir a la máquina cliente (Windows 7) y entrar con un usuario del dominio.
 
 ![usuarios-cliente](./files/pdc-usuarios-cliente.png)
 
-* Comprobar en el PDC que aparecen los equipos CLIENTE1 y CLIENTE2 como equipos del dominio.
+> INFO: Para entrar como usuario local poner "VARGAS42W\profesor". Esto es, "nombre-de-máquina\nombre-usuario-local".
+
+* Ir al PDC (Servidor) y comprobar que aparecen los equipos CLIENTE1 y CLIENTE2 como equipos del dominio.
 
 ![pdc-equipo-dominio](./files/pdc-equipo-dominio.png)
+
+### Por comandos
+
+* Ir a la máquina cliente (Windows 7) y entrar con un usuario del dominio.
+* Abrimos consola PowerShell y ejecutamos los comandos:
+    * `whoami`, muestra nuestro usuario actual. Que debe ser un usuario del dominio.
+    * `net user`, muestra los usuarios locales del sistema.
+    * `hostname`, muestra el nombre del equipo local.
 
 ---
 
@@ -170,7 +214,7 @@ Material de lectura/estudio/consulta:
 
 ## 5.1 Crear un segundo disco:
 
-* Crear un segundo disco (1GB). Lo usaremos para guardar los perfiles (En la carpeta compartida `E:\perfiles$`).
+* Crear un segundo disco (1GB). Lo usaremos para guardar los perfiles.
 
 ![pdc-disco-extra](./files/pdc-disco-extra.png)
 
@@ -180,11 +224,12 @@ Material de lectura/estudio/consulta:
 
 ## 5.2 Crear Perfiles de usuarios:
 
-* En el PDC, crear la carpeta `E:\perfiles$`, como compartida por red.
-Permisos lectura/escritura para todos los usuarios del dominio.
+* En el PDC, crear la carpeta `E:\perfiles`.
+* Definir permisos lectura/escritura para los `usuarios del dominio` en la carpeta.
+* Usar modo avanzado para compartir la carpeta por red con el nombre `perfiles$`.
     * Se recuerda que para acceder a la carpeta compartida de red, los usuarios
     deben tener permisos en el recurso de red y en la carpeta del sistema de ficheros.
-* En el PDC, modificar el atributo `ruta de acceso al perfil` de los siguientes usuarios del dominio:
+* En el PDC, vamos a la herramienta de gestión de `Usuarios del dominio`. Modificar el atributo `ruta de acceso al perfil` de los siguientes usuarios del dominio:
     * yoda: `\\ip-del-PDC\perfiles$\%username%`
     * obiwan: `\\ip-del-PDC\perfiles$\obiwan`
     * vader: `\\ip-del-PDC\perfiles$\%username%`
@@ -192,32 +237,28 @@ Permisos lectura/escritura para todos los usuarios del dominio.
 * Iniciar sesión en CLIENTE1 con los usuarios obiwan y maul.
 * Para cada usuario modificar el entorno del escritorio, colores, iconos.
 * Para el usuario del dominio obiwan
-    * Crear la carpeta jedy en el escritorio
+    * Crear la carpeta `jedi` en el escritorio.
     * Crear fichero `Escritorio/jedi/personajes.txt`. Escribir dentro los nombres de los 2 jedis.
 * Para el usuario dominio maul
-    * Crear la carpeta sith en el escritorio
+    * Crear la carpeta `sith` en el escritorio.
     * Crear fichero `Escritorio/sith/personajes.txt`. Escribir dentro los nombres de los 2 siths.
 
 > De este modo el "perfil" de cada usuario será diferente en aspecto y contenido.
 
-* Debemos comprobar que se han creado las carpetas con los perfiles en el servidor.
+* Debemos comprobar que se han creado las carpetas con los perfiles en el servidor para los usuarios anteriores.
+A continuación se muestra una imagen de ejemplo:
 
 ![pdc-perfiles](./files/pdc-perfiles.png)
 
 ## 5.3 Limpiar el equipo cliente
 
 * Iniciar sesión en CLIENTE1 con el "administrador" del dominio.
-
-Ver imagen de ejemplo:
-
-![pdc-login-admin-pdc](./files/pdc-login-admin-pdc.png)
-
 * Ir a `Inicio -> Panel de Control -> Sistema -> Opciones Avanzadas -> Configuración de Perfiles de usuario`.
-* Eliminar las copias de los perfiles locales en el equipo cliente.
-
-perfiles-en-cliente
-
-* Entrar en el equipo CLIENTE2, con los usuarios del dominio (obiwan y maul)
+* Comprobamos que los usuarios del dominio no tienen perfiles en local. En tal caso, vamos a liminar las copias de los perfiles locales en el equipo cliente para estos usuarios.
+* Entrar en el equipo CLIENTE2, con los usuarios del dominio (obiwan y maul). 
+    * Abrir PowerShell y ejecutar los siguientes comandos.
+    * `hostname`, para mostrar nombre del equipo.
+    * `whoami`, para mostrar nuestro usuario actual.
 * Comprobar que tenemos perfiles móviles para ellos.
 
 > El perfil móvil permite al usuario moverse por PC's diferentes y ver el mismo entorno con sus datos.
@@ -229,13 +270,48 @@ perfiles-en-cliente
 * Enlaces de interés:
     * [Crear perfil obligatorio dando los permisos adecuados](http://somebooks.es/?p=3400).  
     * Vídeo [Usuario con perfil obligatorio Windows Server 2008](https://youtu.be/TKCmAFcKSGA).
+* Primero vamos a dar permisos al usuario `Administrador` sobre el perfil de `maul`.
+    * Desde Windows7. Entramos con usuario `maul`
+    * Accedemos al recurso compartido `\\ip-del-pdc\perfiles$`
+    * Añadimos al usuario `Administrador` para que tenga control total en la carpeta `maul.V2`.
 * Convertir el perfil móvil del  Sith Maul, a perfil obligatorio.
 * Comprobar que ahora el perfil no cambia.
+* Ir a `Inicio -> Panel de Control -> Sistema -> Opciones Avanzadas -> Configuración de Perfiles de usuario`, 
+y comprobar que el perfil es ahora obligatorio.
 
 ---
 
 # 7. Control de tiempo
 
 * Modificar los permisos de acceso de los usuarios del dominio, de la siguiente forma:
-    * Los "jedi" sólo pueden acceder de 08:00 a 14:00 y
-    * Los "sith" sólo pueden acceder de 14:00 a 20:00
+    * Los "jedi" sólo pueden acceder de 08:00 a 14:00 (de lunes a viernes) y
+    * Los "sith" sólo pueden acceder de 14:00 a 20:00 (de lunes a viernes).
+
+---
+
+# ANEXO
+
+
+## Duda con la complejidad de contraseñas
+
+En Windows 2012 Server, queremos quitar la opcion de complejidad de contraseña pero aparece deshabilitada.
+¿Cómo podemos habilitarla para poder desactivar la complejidad de contraseña?
+
+* open Run and type: `gpedit.msc`.
+* from Local Group Policy Editor, choose from the tree (left): `Computer Configuration -> Windows Settings -> Security Settings -> Account Policies -> Password Policy`.
+* choose on the right: `Password must meet complexity requirements`
+* choose Disable.
+
+Si no puedes realizar esto es porque tienes un GPO forzada por politicas desde un Domain Controller o estas usando la SecPol.msc.
+
+## Comandos de Windows
+
+* [Cambiar nombre equipo Windows con comando](https://www.solvetic.com/topic/5426-cambiar-nombre-equipo-windows-con-comando/)
+    * `WMIC computersystem where caption='nombreDEahora' rename nuevoNombre`
+    * Ahora tendrás que reiniciar tu PC Windows para que tenga efecto el nuevo nombre del equipo.
+    * Este comando es válido para todos los sistemas Windows 10, 8, 7, Vista, XP, Server...
+* [Comando para unir equipo a dominio Windows Server](https://www.solvetic.com/tutoriales/article/2706-como-adicionar-windows-10-en-dominio-windows-server/)
+    * El comando Netdom es de los más usados. Lo primero sería descargarlo e instalarlo.
+    *  `netdom.exe join %nombreequipo% /domain:NombreDominio /UserD:NombreDominio\nombreUsuario /PasswordD:Password`
+    * Para quitar y eliminar equipo de dominio Windows Server `netdom.exe remove %nombreequipo%`
+ 

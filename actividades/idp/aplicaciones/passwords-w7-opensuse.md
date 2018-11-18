@@ -7,14 +7,14 @@ Vamos a usar una MV Windows 7.
 
 ## 1.1 Ocultación de usuarios
 
-Vamos a modificar la configuración del sistema para que los usuarios `jedi1` y `jedi2`, NO aparezcan en la ventana de inicio del sistema.
+Vamos a modificar la configuración del sistema para que los usuarios `jedi1` y `jedi2`,
+NO aparezcan en la ventana de inicio del sistema.
 
 * Iniciar sesión con una cuenta administrador.
 * Ir a `Inicio -> Ejecutar`
 * Entrar al registry (comando `regedit`)
+* Hacer una copia de seguridad del registro (exportar) antes de hacer cualquier cambio.
 
-> Hacer una copia de seguridad del resgistro (exportar) antes de hacer cualquier cambio.
->
 > Cuando tenemos que tocar el registro del sistema hay que ser muy precavidos. Un error puede hacer que el sistema completo deje de funcionar.
 > * Ejecutar comando regedit para abrir el registro del sistema, y lo primero,
  usar la opción de export, para hacer una copia de seguridad del registro.
@@ -55,6 +55,20 @@ Vamos a modificar las claves de los usuarios de la siguiente forma:
 * Descargar la iso OphCrack para Windows7. Buscar primero en el servidor
 del departamento antes de descargarlo de Internet.
 * Iniciar la máquina W7 con la iso OphCrack.
+* En el caso de que no se inicie la herramienta en entorno gráfico, hacer lo siguiente:
+    * Pulsar F12
+    * Elegir la opción de CDROM (c)
+    * Elegir arranque manual
+
+> Otra opción es usar CDLive de Kali Linux
+>
+> * Iniciar con CDLive de Kali Linux
+> * Abrir terminal, buscar partición del sistema Windows (`fdisk -l`)
+> * Montar la partición de Windows en `/mnt` (`mount /dev/sdaX /mnt`)
+> * Iniciar aplicación OphCrack
+> * Botón `Load -> Encrypted SAM -> /mnt/Windows/System32/config`
+> * Botón `Crack`
+
 * Esperar y comprobar cómo aparecen las claves.
 * Realizar captura de pantalla.
 
@@ -70,7 +84,7 @@ del departamento antes de descargarlo de Internet.
 
 # 2. SO GNU/Linux
 
-Usaremos una MV GNU/Linux OpenSUSE 13.2.
+Usaremos una MV GNU/Linux OpenSUSE.
 
 > Enlaces de interés sobre  [Cuentas de usuario](https://es.opensuse.org/Cuentas_de_usuario)
 
@@ -79,6 +93,8 @@ Usaremos una MV GNU/Linux OpenSUSE 13.2.
 Vamos a modificar el sistema para que los usuarios `jedi1` y `sith1`,
 NO aparezcan en la ventana de inicio del sistema.
 
+* Si nuestro entorno gráfico actual ya oculta los usuario, no hay que hacer nada.
+En caso contrario seguimos con este apartado.
 * Cuando nuestro sistema usa AccountsService, para ocultar un usuario llamado
 USERNAME, modificar el fichero `/var/lib/AccountsService/users/USERNAME`
 con el siguiente contenido:
@@ -88,9 +104,11 @@ con el siguiente contenido:
 SystemAccount=true
 ```
 
+> Este cambio es válido para el escritorio Xfce, pero no para KDE
+
 ## 2.2 Claves seguras
 
-* Añadir nuestro usuario y los usuarios `jedi1` y `jedi2` al grupo `sudo`,
+* Configurar nuestro usuario y los usuarios `jedi1` y `jedi2` en el fichero `/etc/sudoers`,
 para que puedan obtener privilegios administrativos.
 * Modificar las claves de los usuarios de la siguiente forma:
     * sith1: 1234
@@ -135,7 +153,7 @@ clave 123456.
 
 Vamos a desactivar el inicio gráfico al inicio.
 * Ir a `Yast -> Administración de Servicios`
-* Cambiar `Default system target` de `Graphical Interface` a `Multi-User System`
+* Cambiar `Estado predeterminado` de `Graphical Interface` a `Multi-User System`
 * Reiniciar
 * Entramos en el sistema sin entorno gráfico.
 
@@ -143,11 +161,12 @@ Ahora vamos a restaurar el inicio gráfico automático al inicio.
 * Ejecutamos `yast`
 
 > Usaremos:
+>
 > * la tecla tabulador para movernos por los campos, y
 > * la tecla enter para entrar/aceptar opciones
 
 * Vamos a `Sistema -> Administrador de Servicios`
-* Cambiamos `Default System target` a `Graphical Interface`.
+* Cambiamos `Estado predeterminado` a `Graphical Interface`.
 
 ---
 
@@ -193,13 +212,3 @@ En el ejemplo podemos ver que estamos usando el programa ligthdm, el cual es un 
 * Consultar la información de nuestro gestor de inicio gráfico para cambiar
  la configuración y ocultar los usuarios. Gestores gráficos hay muchos: lightdm, gdm,
  gdm3, kdm, xdm, etc. (*Consultar ANEXO o buscar información en Internet*).
-
-> **NO HACER LO SIGUIENTE**
->
-> El siguiente comando modifica el ID númerico del nombre de usuario que especifiquemos:
-`sudo usermod -u 999 nombre-de-usuario`. Con esto podemos conseguir un efecto de "ocultación"
-en la ventana de inicio del sistema, porque los usuarios con valor ID inferior a 1000,
-se consideran usuarios especiales del sistema. Por tanto, el sistema no los identifica
-como usuarios-humanos que van a usar la interfaz gráfica, y no los muestra en la ventana de login.
->
-> Pero NO LO HAGAN SE ESTA FORMA.

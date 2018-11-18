@@ -1,12 +1,12 @@
 
-#Crear usuarios y directorios
+# Crear usuarios y directorios
 
-##Entrega
+## Entrega
 * Vamos a crear un script ruby llamado `create-users.rb`.
 * La entrega la realizaremos a través del repositorio Git.
 * Al terminar etiquetaremos la entrega con *create-users*.
 
-##Script
+## Script
 
 Argumentos:
 * Crear un fichero de texto `userslist.txt`, donde vendrán definidos
@@ -43,6 +43,9 @@ Por ejemplo:
     system("mkdir /home/username/private")
 ```
 
-##Enlaces de interés
-* ¿Cómo crear [scripts que no requieran la intervencion del usuario]
- (https://es.opensuse.org/Scripts_sin_intervencion_del_usuario)?
+## Incluir comprobaciones
+* Antes de intentar eliminar el usuario, comprobar si existe.
+* Antes de leer el archivo, comprobar si existe.
+
+## Enlaces de interés
+* ¿Cómo crear [scripts que no requieran la intervencion del usuario](https://es.opensuse.org/Scripts_sin_intervencion_del_usuario)?

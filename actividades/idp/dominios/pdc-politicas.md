@@ -1,8 +1,4 @@
 
-```
-Actividad realizada los cursos: 201415, 201516
-```
-
 # 1. Políticas o directivas de grupo
 
 * Leer la documentación que se proporciona. Concretamente el fichero `M34_directivas_grupos.pdf`.
@@ -13,72 +9,55 @@ Actividad realizada los cursos: 201415, 201516
 
 ---
 
-# 2. Aplicar directivas (I)
+# 2. Aplicar directivas de Usuario
 
 Realizar las siguientes tareas:
 
-* Antes de empezar la práctica vamos a crear un "snapshot" (instantánea) de la máquina virtual.
-* Crear las OU (Unidades Organizativas) `jediXXc1516` y `sithXXc1516`.
+* Antes de empezar la práctica vamos a crear un "snapshot" (instantánea) de la máquina virtual por seguridad.
+* Crear las OU (Unidades Organizativas) `jediXXc1718` y `sithXXc1718`.
 * Mover los usuarios a su correspondiente OU.
-* Enlace sobre [cómo aplicar una GPO a un grupo](http://www.aprendeinformaticaconmigo.com/windows-server-2008-filtrar-una-gpo-para-aplicarla-a-grupos/).
+* Enlaces de interés:
+    * Sobre [cómo aplicar una GPO a un grupo en Win Server 2008](http://www.aprendeinformaticaconmigo.com/windows-server-2008-filtrar-una-gpo-para-aplicarla-a-grupos/).
+    * Vídeo sobre [Crear políticas de grupo (GPO) para Win Server 2012 R2](https://www.youtube.com/watch?v=LnO0aeK8_P4&t=647s)
 
-> **IMPORTANTE**: No aplicar la directivas a todo el dominio.
-> Sólo a las unidades organizativas que se especfiquen.
+> **IMPORTANTE**: No aplicar la directivas a todo el dominio. 
+> Sólo a las unidades organizativas que se especifiquen. 
+> Un error grave es aplicar las directivas a todo el site en lugar de a cada OU.
+> Este error puede afectar al correcto funcionamiento del servidor.
 
-* Vamos a crear una GPO diferente para cada OU.
-    * `gpo_jediXX`, para los jedis y
-    * `gpo_sithXX`, para los siths.
+* Dentro de la OU de los jedis crear la GPO `gpo_jediXX`.
+* Dentro de la OU de los siths crear la GPO `gpo_sithXX`.
 
 > **INFO**
 > Para editar configuraciones de Directiva de grupo:
 > * En Group Policy Management (Administración de directivas de grupo), en el árbol de consola, desplegar Group Policy Objects (Objetos de Directiva de grupo). Click con el botón derecho del ratón en el GPO y seleccionar Edit (Editar).
 > * En el Editor de objetos de Directiva de grupo, buscar la Directiva de grupo que queremos modificar y hacemos doble clic. En el cuadro de diálogo Propiedades, cambiamos la configuración y Aceptar.
 
-* Vamos a aplicar las siguientes directivas a las OU anteriores. Elegir unas para una OU y otras para la otra.
+Vamos a aplicar las siguientes directivas a las OU anteriores. Elegir unas para una OU y otras para la otra.
+* En la sección de `Configuración de usuario / Directivas / Plantillas administrativas / Menú Inicio y barra de tareas` (User configuration / Administrative Templates / Start Menu and Taskbar)
+    * `Quitar el menú Ejecutar del menú Inicio`
+    * `Quitar el icono de Red del menú inicio`
+    * `Quitar icono de Red`
+    * `Quitar Conexiones de red del menú Inicio`
+* En la sección `Configuración de usuario / Directivas / Plantillas administrativas / Panel de control` (User configuration / Administrative Templates / Control Panel)
+    * `Prohibir el acceso al Panel de control`
+* En la sección `Configuración de usuario / Directivas / Plantillas administrativas / Escritorio` ( User configuration / Administrative Templates / Active Desktop)
+    * `Ocultar el icono Ubicaciones de red del escritorio`.
+* En la sección de `Configuración de usuario / Directivas / Plantillas administrativas / Componentes de Windows / Explorador de Windows` (User configuration / Administrative Templates / Windows Components / Windows Explorer) 
+    * Ocultar estas unidades específicas en Mi PC (Hide these specified drives in My Computer) o Impedir el acceso a las unidades desde Mi PC (Prevent Access to drives from my computer). Elegir un combinación adecuada como bloquear las unidades A y B (Restrict A y B drives only).
+    * `Quitar <Conectar a unidad de red> y <Desconectar de unidad de red>`
 
-> OJO: Un error es aplicar las directivas a todo el site en lugar de a cada OU.
-Este error puede afectar al correcto funcionamiento del servidor.
-
-* `Quitar el menú Ejecutar del menú Inicio`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Menú Inicio y barra de tareas (User configuration / Administrative Templates / Start Menu and Taskbar)
-    * Configuración de Directiva de grupo: Quitar el menú Ejecutar del menú Inicio (Remove Run menu from Start Menu)
-    * Opción Habilitada
-* `Prohibir el acceso al Panel de control`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Panel de control (User configuration / Administrative Templates / Control Panel)
-    * Configuración de Directiva de grupo: Prohibir el acceso al Panel de control (Prohibit access to the Control Panel)
-    * Opción Habilitada
-* `Ocultar el icono Mis sitios de red del escritorio`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Escritorio ( User configuration / Administrative Templates / Desktop)
-    * Configuración de Directiva de grupo: Ocultar el icono Mis sitios de red del escritorio (Hide My Network Places icon on desktop)
-    * Opción Habilitada
-* `Quitar el icono Mis sitios de red del menú inicio`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Menú Inicio y barra de tareas (User configuration / Administrative Templates / Start Menu and Taskbar)
-    * Configuración de Directiva de grupo: Quitar el icono Mis sitios de red del men ú Inicio (Remove My Network Places icon from Start Menu)
-    * Opción Habilitada
-* `Quitar Conexiones de red del menú Inicio`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Menú Inicio y barra de tareas (User configuration / Administra tive Templates / Start Menu and Taskbar)
-    * Configuración de Directiva de grupo: Quitar Conexiones de red del menú Inicio (Remove Network Connections from the Start Menu)
-    * Opción Habilitada
-* `Ocultar unidades específicas en Mi PC`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Componentes de Windows / Explorador de Windows (User configuration / Administrative Templates / Windows Components / Windows Explorer)
-    * Configuración de Directiva de grupo: Ocultar estas unidades específicas en Mi PC (Hide these specified drives in My Computer) o Impedir el acceso a las unidades desde Mi PC (Prevent Access to drives from my computer).
-    * Opción Habilitada. Elegir un combinación adecuada como bloquear las unidades A y B (Restrict A y B drives only).
-* `Quitar <Conectar a unidad de red> y <Desconectar de unidad de red>`
-    * Ubicación: Configuración de usuario / Directivas / Plantillas administrativas / Componentes de Windows / Explorador de Windows (User configuration / Administrative Templates / Windows Components / Windows Explorer)
-    * Configuración de Directiva de grupo: Quitar "Conectar a unidad de red" y "Desconectar de unidad de red" (Remove "Map Network Drive" and "Disconnect Network Drive").
-    * Opción Habilitada
-
+Al terminar de configurar las directivas, hacemos lo siguiente:
 * Abrir consola como administrador y ejecutar `gpupdate /force` para forzar las
 actualizaciones de las directivas. En algunos casos, después de definir una política,
 ésta tarda un tiempo en activarse, pero usando el comando anterior, nos aseguramos
 de que este paso de activación se realice inmediatamente.
-* Capturar imagen del resumen de la configuración de cada una de las directivas creadas
-(`Ir a directiva -> Configuración`).
-* Capturar imágenes donde se muestren los efectos de las directivas de usuario en las MV cliente.
+* Ir a `Administración de Directivas de Grupo`. Capturar imagen del resumen de la configuración de cada una de las directivas creadas (`Ir a directiva -> Configuración`). Esta pestaña debe mostrar las opciones que hemos usado para configurar nuestra directiva.
+* Comprobar los efectos de las directivas de usuario en las MV cliente.
 
 ---
 
-# 3. Aplicar directivas (II)
+# 3. Aplicar directiva de Equipo
 
 > Enlaces de interés
 >
@@ -91,28 +70,31 @@ de que este paso de activación se realice inmediatamente.
 
 * IMPORTANTE: Vamos a crear otro "snapshot" de la máquina virtual.
 
-Vamos a crear nuestro propio paquete MSI.
+## 3.1 Instalar en el servidor
+
+Vamos a crear nuestro propio paquete de instalación MSI.
 * Consultar enlace sobre cómo [Crear paquetes MSI con WinINSTALL](http://www.ite.educacion.es/formacion/materiales/85/cd/windows/11Directivas/crear_paquetes_msi.html).
 
 **En el servidor**
-* Descargar el programa WinINSTALL
+* Descargar el programa WinINSTALL y lo instalamos.
     * http://www.downloadsource.es/3414/WinINSTALL-LE/
     * http://www.freewarefiles.com/downloads_counter.php?programid=52066
-* Una vez instalada la aplicación hemos de asignar permisos de acceso remoto a la carpeta compartida WinINSTALL.
+* Una vez instalada la aplicación hemos de asignar permisos de acceso al recurso compartido de WinINSTALL al usuario `Administrador` en modo lectura.
 * Crear la carpeta `e:\softwareXX`.
-    * Esta carpeta con permisos de lectura para todos los usuarios.
-    * Este carpeta con permisos lectura/escritura para todos los administradores.
-* Crear un recurso compartido de red `E:\softwareXX`.
-    * Este recurso con permisos de lectura para todos los usuarios.
-    * Este recurso con permisos lectura/escritura para todos los usuarios del dominio.
+    * Esta carpeta con permisos de `lectura/ejecución, mostrar... y lectura` para los usuarios del dominio.
+    * Este carpeta con permisos `control total` para los administradores.
+* Crear un recurso compartido de red `softwareXX` a la carpeta anterior.
+    * Este recurso con permisos de `lectura` para Todos.
+    * Este recurso con permisos `control total` para los usuarios del dominio.
 * Crear la subcarpeta `e:\softwareXX\firefox`.
+
+## 3.2 Crear paquete MSI
 
 **En el cliente**
 * Entramos con el usuario administrador del dominio.
-* Descargar el instalador de Firefox. ¡OJO! El instalador de Firefox debe tener un
-tamaño de varios MBs. Si tiene pocos KBs no es el instalador, sino un programa
-para descargar el instalador.
-* Inicio -> Ejecutar -> `\\ip-del-servidor\WinINSTALL\Bin\Discover.exe`,
+* Descargar el instalador de Firefox. ¡OJO! Sólo descargar. NO instalar todavía. El instalador de Firefox debe tener un
+tamaño de varios MBs. Si tiene pocos KBs no es el instalador, sino un programa para descargar el instalador.
+* `Inicio -> Ejecutar -> \\ip-del-servidor\WinINSTALL\Bin\Discover.exe`,
 para iniciar la aplicación WinINSTALL LE de forma remota,
 
 ![pdc-wininstall-discover.png](./files/pdc-wininstall-discover.png)
@@ -133,9 +115,8 @@ en nuestro caso aceptaremos las opciones propuestas por el asistente por defecto
 > En el tiempo comprendido entre la ejecución de este proceso y la ejecución
 del proceso de la foto final, es crítico ejecutar únicamente el software
 de instalación del paquete MSI a generar.
-> Cualquier modificación en dicho periodo temporal, al margen de la propia de instalar
- el software correspondiente del que deseamos generar el paquete MSI,
- se grabaría en el paquete MSI obtenido, cuando realmente no formaría parte de las modificaciones que realizó dicha aplicación durante su instalación.
+> Cualquier modificación que se haga durante este proceso, se grabará en el paquete MSI obtenido, 
+aunque no forme parte de las modificaciones realizadas de la aplicación durante su instalación.
 
 * Una vez que la foto inicial haya sido realizada, pulsamos Aceptar, y
 a continuación se nos mostrará otra ventana en el que seleccionaremos el fichero
@@ -148,68 +129,54 @@ Este que puede durar varios minutos.
 * Podremos confirmar que el paquete ha sido creado correctamente en el equipo "SERVIDOR",
 yendo a la carpeta `E:\softwareXX\firefox`.
 * Limpiamos el equipo cliente:
-    * Eliminar el fichero firexfox.exe que nos habíamos descargado.
+    * Eliminar el fichero firefox.exe que nos habíamos descargado.
     * Desinstalar el programa Firefox del cliente.
 
+## 3.3 Crear nueva GPO en el servidor
+
 **Vamos al servidor:**
-* Crear las OU `maquinasXXc1617` y mover los equipos del dominio dentro de esta UO.
-* Vamos a crear una directiva (`gpo_softwareXX`) para la instalación del
-software `firefox.msi` para la OU anterior.
-* Asociamos a la directiva de grupo de Instalación de software ubicada en
-`Configuración del equipo -> Directivas -> Configuración de software`,
+* Crear las OU `maquinasXXc1718` y mover los equipos del dominio dentro de esta UO.
+* Dentro de la OU anterior, crear una nueva directiva (`gpo_softwareXX`).
+* Editar la directiva. Ir a `Configuración del equipo -> Directivas -> Configuración de software`,
 un nuevo paquete de instalación de software de la aplicación.
+    * Elegir el paquete `\\ip-del-servidor\softwareXX\firefox\firefox.msi`
     * Configurar la instalación del paquete en modo `Asignado`.
+* En la GPO. Ir a la Directiva -> Ámbito -> Filtrado de seguridad y añadir `Usuarios del dominio`.
 
 > **ADVERTENCIAS**
 >
 > * Cuando indiquemos la ruta al paquete MSI, debemos indicar su
 ruta de red y NO su ruta del sistema de ficheros.
 >     * Ejemplo correcto: `\\ip-del-servidor\softwareXX\firefox\firefox.msi`
->     * Ejemplo incorrecto: `E:\softwareXX\firefox\firefox.msi`
+>     * Ejemplo INCORRECTO: `E:\softwareXX\firefox\firefox.msi`
 > * La configuración de instalación de paquete `Publicado` no instala el programa,
 pero lo deja disponible por si el usuario lo quiere instalar a través de la
 herramienta de `Instalación de Software` del panel de control.
 
 * Abrir consola como administrador y ejecutar `gpupdate /force` para forzar las
 actualizaciones de las directivas.
-* Capturar imagen del resumen de la configuración de cada una de las directivas creadas
+* Capturar imagen del resumen de la configuración de cada una de la directiva creada
 (`Ir a directiva -> Configuración`).
 
+## 3.4 Comprobar desde los clientes
+
 **Vamos al otro cliente:**
-* Entramos con un usuario del dominio y se debe instalar automáticamente el programa.
+* Entramos con un usuario del dominio y se debe haber instalado automáticamente el programa que hemos configurado
+en las directivas. OJO. Este paso puede tardar bastante tiempo.
+* Mostrar salida de los comandos: `whoami` y `hostname`.
 
-![pdc-wininstall-domain-user.png](./files/pdc-wininstall-domain-user.png)
-
-> Esto puede tardar bastante tiempo.
+> **ERRORES**
+>
+> * En caso de tener problemas deshabilitar de las directivas la opción de `Ocultar el icono Ubicaciones de red del escritorio`.
+> * Comprobar acceso al recurso remoto desde los clientes.
+> * Comprobar MSI de forma manual.
 
 ---
 
 # ANEXO A
 
-## A.1 GPO en Windows Server 2012
+Parece que la directiva siguiente no es compatible con la instalación de software:
+* En la sección `Configuración de usuario / Directivas / Plantillas administrativas / Escritorio` ( User configuration / Administrative Templates / Active Desktop)
+    * `Ocultar el icono Ubicaciones de red del escritorio`.
 
-Windows Server 2012 R2 - Crear políticas de grupo (GPO)
-https://www.youtube.com/watch?v=LnO0aeK8_P4&t=647s
-
-Detalles de la tarea de esta unidad. Enunciado.
-
-    Crea un nuevo grupo en tu servidor denominado Alumnos (incorpora a ese grupo al menos un usuario).
-    Crea un nuevo GPO (Group Policy Object) en tu dominio denominado Alumnos y aplica como filtro de seguridad el grupo que has creado en el punto anterior.
-    Aplica, además, al nuevo GPO las siguientes directivas:
-
-    Quitar el menú Ejecutar del menú Inicio
-    Prohibir el acceso al Panel de control
-    Ocultar el icono Mis sitios de red del escritorio
-    Quitar el icono Mis sitios de red del menú inicio
-    Quitar Conexiones de red del menú Inicio
-    Ocultar unidades específicas en Mi PC
-    Quitar “Conectar a unidad de red” y “Desconectar de unidad de red
-    Conseguir que, cuando se introduce un dispositivo USB, no se ejecute de forma automática
-
-Comprueba (y deja constancia de ello en tu informe) que desde el cliente (Windows 7) cuando se valida en tu dominio con un usuario del grupo alumno se le aplican las políticas correspondientes.
-
-Elabora un informe en el que dejes constancia de la realización.
-
-Nota 1: Puedes encontrar en internet muchísima información actualizada para aplicar las directivas de seguridad propuestas.
-
-Nota 2: esta actividad se puede realizar en grupo de 2 como máximo, pero los dos componentes del grupo deben realizarla.
+![pdc-wininstall-domain-user.png](./files/pdc-wininstall-domain-user.png)

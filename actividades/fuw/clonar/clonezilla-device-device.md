@@ -13,11 +13,12 @@ de pantalla/fotos de los pasos realizados.
 
 # 2. Preparamos el segundo disco
 
-* Usaremos una MV EFI con OpenSUSE para esta práctica.
+* Usaremos una MV con OpenSUSE para esta práctica.
 * Añadir un 2º disco duro del mismo tamaño que el disco original (Puede ser un poco mayor, pero nunca menor).
     * VirtualBox -> Seleccionar MV.
     * Configuración -> Almacenamiento -> SATA.
     * Añadir disco duro con el nombre `target-nombrealumnoXX.vdi`.
+* Capturar imagen con los tamaños de los dicos VirtualBox.
 * Descargar la ISO con Clonezilla del servidor Leela
 (Descargar la más reciente).
 
@@ -36,6 +37,7 @@ Iniciar la MV con la distro Clonezilla para realizar una clonación del tipo *de
 * `device-device`
 * `Beginner`
 * `disco-local a disco-local`
+* `Elegir reiniciar/apagar/etc cuando esté todo terminado`
 * Capurar imagen del comando con parámetros que aparece en la consola antes de
 confirmar del inicio del proceso.
 * Consultar archivo `/tmp/ocs-onthefly-...`. Este fichero contiene el comando y los parámetros necesarios para realizar la tarea de clonación.
@@ -44,15 +46,18 @@ confirmar del inicio del proceso.
 
 # 4. Comprobamos
 
-* Quitamos el disco `clonado` e iniciamos el sistema.
+* Quitamos el disco `clonado`. Capturar imagen VBox de los discos.
+* Iniciar el sistema.
 * Crear archivo `/home/profesor/Documentos/disco-original.txt`.
-* Quitamos el disco `original`, añadimos el disco `clonado`
+* Quitamos el disco `original`, añadimos el disco `clonado`. Capturar imagen VBox de los discos.
 * Iniciamos el sistema.
 * Comprobamos que no están los archivos que habíamos creado.
 
 ---
 
-# ANEXO BootEFI, fstab y los UUID
+# ANEXO
+
+Información sobre BootEFI, fstab y los UUID
 
 ## A.1 Modificar UUID en el fichero fstab
 
@@ -93,11 +98,7 @@ http://xarx.es/deries/2013/02/21/clonezilla-clonando-disco-o-particiones-al-vuel
 
 * Reconfigurar el Grub2 cuando tenemos MV EFI.
 
-## A.5 virtualbox
-
-Comandos de virtual box para comprobar la configuración de la MV.
-
-## A.6 Clonazilla
+## A.5 Clonezilla
 
 * `/usr/sbin/ocs-onthefly -g auto -e1 auto -e2 -r -j2 -f sda -t sdb`, clonar disco
 sda en disco sdb.

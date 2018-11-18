@@ -1,88 +1,130 @@
 
-Documentos relacionados
-* Configurar [VirtualBox](../virtualbox/opensuse.md)
-* Configurar [Acceso remoto](../acceso-remoto/opensuse.md)
+> Documentos relacionados:
+>
+> * Configurar [VirtualBox](../virtualbox/opensuse.md)
+> * Configurar [Acceso remoto](../acceso-remoto/opensuse.md)
+> * Configurar [Firewall](../firewall.md).
 
 # Configurar MV GNU/Linux OpenSUSE
 
+## Introducción
+
 > * Donde aparezca AA debemos poner el código asignado al aula:
 >     * 18 para el aula108
->     * 19 para el aual109
+>     * 19 para el aula109
 > * Donde aparezca XX debemos poner el código asignado al alumno.
 
-* Usar un disco VirtualBox de 15GB.
-* Para prevenir la duplicicada de la MAC de la tarjeta de red puente podemos poner `080027AAXXNN`.
-* Configuramos el interfaz de red puente en modo estático.
+---
 
-## Durante la instalación
+# Máquina VirtualBox
+
+* Usar un disco VirtualBox de 15GB.
+* Tarjeta de red VBox en `modo puente`.
+
+---
+
+# Durante la instalación del SO
 
 Recomendaciones:
+* Crear usuario identificado con `nombre-del-alumno`.
 * Seleccionar entorno gráfico ligero como Xfce.
+* Recordatorio.
+    * Abrir puerto SSH.
+    * Habilitar servicio SSH.
 * Configurar lo siguiente durante la instalación:
 
-![opensuse-instalacion-configuracion.png](./images/opensuse-instalacion-configuracion.png)
+> ![opensuse-instalacion-configuracion.png](./images/opensuse-instalacion-configuracion.png)
 
-## Proceso de configuración con Yast
+---
 
-Una vez instalado el sistema operativo, podemos hacer cambios en la configuración,
-usando la herramienta `Inicio -> Configuración -> Yast`. Luego iremos a la
-opcion de `Ajustes de red`.
+# usuario
 
-Vamos a `Vista resumen -> Interfaz -> Editar`
+Comprobar con los siguientes comandos:
+
+```
+id nombre-alumno # Muestra información del usuario
+```
+
+---
+
+# Comprobar nombre del equipo por los ficheros de texto
+
+Comprobar hostname:
+```
+david@vargas42g1:~> cat /etc/hostname
+vargas42g1.curso1819
+```
+
+Comprobar host
+
+```
+david@vargas42g1:~> cat /etc/hosts
+#
+# hosts         This file describes a number of hostname-to-address
+#               mappings for the TCP/IP subsystem.  It is mostly
+#               used at boot time, when no name servers are running.
+#               On small systems, this file can be used instead of a
+#               "named" name server.
+
+127.0.0.1	localhost
+127.0.0.2 vargas42g1.curso1819   vargas42g1
+
+# special IPv6 addresses
+::1             localhost ipv6-localhost ipv6-loopback
+fe00::0         ipv6-localnet
+ff00::0         ipv6-mcastprefix
+ff02::1         ipv6-allnodes
+ff02::2         ipv6-allrouters
+ff02::3         ipv6-allhosts
+```
+
+Comprobar con los siguientes comandos:
+
+```
+uname -a         # Muestra información del SO
+hostname -f      # Muestra nombre-maquina.nombre-dominio
+hostname -a      # Muestra nombre-maquina
+hostname -d      # Muestra nombre-dominio
+```
+
+---
+
+# Configuración de red y nombre del equipo por YAST
+
+Una vez instalado el sistema operativo, podemos hacer cambios en la configuración de red.
+
+Vamos a `Inicio -> Configuración -> Yast -> Ajustes de red`.
+* Seleccionamos el interfaz de red y editamos.
 * Marcamos IP fija.
 * IP: `172.AA.XX.31` (Donde XX corresponde al nº de cada puesto).
-    * Si tenemos varias máquinas usaremos las IP 172.AA.XX.32, 172.AA.XX.33, etc.
     * Máscara de red: `255.255.0.0`
 * Siguiente
 
 Vamos a `Nombre de Host/DNS` y ponemos:
 * Desmarcamos `Modificar nombre mediante DHCP`
 * Marcamos `Asignar nombre de host a la IP bucle local`
-* Nombre de equipo: `primer-apellido-del-alumnoXXg`.
-    * Por ejemplo vargas30g
-    * Si tenemos varias máquinas las llamaremos vargas30h, vargas30i, vargas30j, etc.
-* Nombre de dominio: `curso1617` (Modificar los números al curso actual).
-* Servidor DNS: `8.8.4.4`
-Vamos a `Encaminamiento`y ponemos:
-* Gateway o pasarela IPv4: `172.AA.0.1`. Esto es la puerta de enlace o encaminamiento.
+* Nombre de equipo: `primer-apellido-del-alumnoXXg1`.
+    * Por ejemplo vargas30g1
+* Nombre de dominio: `curso1819` (Modificar los números al curso actual).
+* Servidor DNS: `8.8.4.4`.
+* Vamos a `Encaminamiento`y ponemos Gateway o pasarela IPv4: `172.AA.0.1`. Esto es la puerta de enlace o encaminamiento.
 * Ir dispositivo y elegir interfaz de red.
-* Usuarios:
-    * Un usuario identificado con `nombre-del-alumno`.
-    * Poner al usuario `root` la clave del alumno con la letra en minúscula.
 
-> **ATENCIÓN**
->
-> * Los nombres de usuario, máquina y dominio deben estar en minúsculas.
-Sin usar caracteres especiales como ñ, tildes, espacios, etc.
-> * Asegurarse de que el nombre de host está correctamente en el fichero `/etc/hosts`.
-Para que el comando hostname funcione bien.
+Comprobar con los siguientes comandos:
 
-* Tarjeta de red VBox en `modo puente`.
-* Configurar [acceso remoto](../acceso-remoto.md).
-* Configurar [firewall](../firewall.md).
-
-## Comprobaciones finales
-
-Capturar imágen de la configuración del equipo:
 ```
-date
-uname -a
-hostname -f #Muestra nombre-maquina.nombre-dominio
-hostname -a #Muestra nombre-maquina
-hostname -d #Muestra nombre-dominio
-
-tail -n 5 /etc/passwd
-ip a
-route -n
-ping 8.8.4.4
-host www.iespuertodelacruz.es
-blkid
+ip a                    # Información de red
+ifstatus NOMBREINTERFAZ # Muestra información de la configuración de red
+ping 8.8.4.4            # Verifica la conectividad con Internet
+host www.nba.com        # Comprueba DNS
 ```
 
-## Configurar con entorno gráfico
+> * Si tenemos varias máquinas usaremos las IP 172.AA.XX.32, 172.AA.XX.33, etc.
+> * Si tenemos varias máquinas las llamaremos vargas30g2, vargas30g3, vargas30g4, etc.
 
-Para configurar la red por entorno gráfico vamos a
-`Inicio -> Yast -> Ajustes de red`
+---
+
+# ANEXO
 
 ## Ficheros de configuración
 
@@ -102,19 +144,11 @@ STARTMODE='ifplugd'
 
 ## EFI + GPT
 
-* Creamos una MV VirtualBox para usar con SO OpenSUSE Leap 42.2
-    * Tamaño de disco 15 GB.
-    * Dos tarjetas de red:
-        * (1) Adaptador puente y configuración estática
-        * (2) NAT y configuracion dinámica.
-* Ir a `VBox -> Configuración -> Sistema -> EFI -> Habilitar`.
+* Creamos una MV VirtualBox y Activamos EFI. Ir
+`VBox -> Configuración -> Sistema -> EFI -> Habilitar`.
 * Consultar la siguiente propuesta de particionamiento y comprobar que se
 proponen 3 particiones (swap, para el sistema y una nueva para el boot/efi).
 
 ![opensuse-particiones-efi.png](./images/opensuse-particiones-efi.png)
 
 ![opensuse-particiones-efi2.png](./images/opensuse-particiones-efi2.png)
-
-* Recordatorio. En la sección `Configuración de la Instalación -> Cortafuegos y SSH`:
-    * Abrir puerto SSH.
-    * Habilitar servicio SSH.
